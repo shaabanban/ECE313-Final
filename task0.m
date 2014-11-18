@@ -2,8 +2,7 @@
 % vim:noexpandtab tabstop=4
 close all;
 clear all;
-patients={};
-labels={};
+patients=[];
 % Open the result file
 fid = fopen('ECE313_Final_Project_group_zeta.txt', 'w');
 
@@ -48,9 +47,12 @@ floor(all_data);
 sizetraining=int32(size(all_data,2)*2./3.);
 sizetesting=sizetraining+1;
 sizetotal=size(all_data);
-patients=[patients,{[{all_data},{all_labels},{[{all_data(1:7,1:sizetraining ...
-    )},{all_labels(1,1:sizetraining)}]},{[{all_data(1:7,sizetesting:end)},{all_labels(1,sizetesting:end)}]}]}];
+patient=struct('all',all_data,'labels',all_labels,'trainingData', ...
+    all_data(1:7,1:sizetraining),'trainingLabels',all_labels(1,1:sizetraining), ...
+    'testingData',all_data(1:7,sizetesting:end),'testingLabels',all_labels(1,sizetesting:end));
 
+    
+patients=[patients,patient];
 [data_mean_area, data_mean_r2r, data_bpm, data_p2p, data_systolic, ...
     data_diastolic, data_pulse] = extract_data(all_data);
 
