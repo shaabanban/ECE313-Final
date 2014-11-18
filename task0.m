@@ -147,11 +147,14 @@ p_H1 = (NUM_PATIENTS);
 for i = 1:NUM_PATIENTS
     % Calculate H0 and H1.
     % H0 is the probability that there is no patient abnomality.
-    p_H0(i) = sum(labels_per_file{1, i} == 0) / size(labels_per_file{1, i}, 2);
+    p_H0(i) = sum(patients(i).trainingLabels) / size(patients(i).trainingLabels, 2);
     % H1 is the probability that there is a patient abnomality.
     p_H1(i) = 1.0 - p_H0(i);
+    
     freq_mean_area = tabulate(floor(data_mean_area_per_file{DATA_CELL_RAW, i}));
     freq_mean_area(:,3) = freq_mean_area(:,3) / 100.0;
 end % i to NUM_PATIENTS
+
+
 
 fclose(fid);
