@@ -1,0 +1,131 @@
+%% Common setup code and variables.
+% vim:noexpandtab tabstop=4
+close all;
+clear all;
+patients={};
+labels={};
+% Open the result file
+fid = fopen('ECE313_Final_Project_group_zeta.txt', 'w');
+
+% Definitions of all_data rows. From slide 5.
+DATA_MEAN_HEART_BEAT_AREA =     1;
+DATA_MEAN_R2R_PEAK_INTERVAL =   2;
+DATA_BPM_HEART_RATE =           3;
+DATA_P2P_BLOOD_PRESSURE =       4;
+DATA_SYSTOLIC_BLOOD_PRESSURE =  5;
+DATA_DIASTOLIC_BLOOD_PRESSURE = 6;
+DATA_PULSE_PRESSURE =           7;
+
+% Indices into the array of cells.
+DATA_CELL_RAW =         1; % The data read in from the files.
+DATA_CELL_TRAINING =    2; % The portion of data used in training.
+DATA_CELL_TESTING =     3; % The portion of data used in testing.
+NUM_DATA_CELLS =        3;
+
+% All 9 data files.
+filenames = {'1_a41178.mat', '2_a42126.mat', '3_a40076.mat', ...
+    '4_a40050.mat', '5_a41287.mat', '6_a41846.mat', '7_a41846.mat', ...
+    '8_a42008.mat', '9_a41846.mat'};
+NUM_PATIENTS =          9;
+
+% The data labels are put into one cell of these cell arrays.
+data_mean_area_per_file = cell(NUM_DATA_CELLS,9);
+data_mean_r2r_per_file = cell(NUM_DATA_CELLS,9);
+data_bpm_per_file = cell(NUM_DATA_CELLS,9);
+data_p2p_per_file = cell(NUM_DATA_CELLS,9);
+data_systolic_per_file = cell(NUM_DATA_CELLS,9);
+data_diastolic_per_file = cell(NUM_DATA_CELLS,9);
+data_pulse_per_file = cell(NUM_DATA_CELLS,9);
+
+
+%% Task 0.
+% Load all data files.
+fprintf(fid, 'Task 0\n\n');
+for i = 1:NUM_PATIENTS
+load(filenames{i});
+floor(all_data);
+sizetraining=int32(size(all_data,2)*2./3.);
+sizetesting=sizetraining+1;
+sizetotal=size(all_data);
+patients=[patients,{[{all_data},{all_labels},{[{all_data(1:7,1:sizetraining ...
+    )},{all_labels(1,1:sizetraining)}]},{[{all_data(1:7,sizetesting:end)},{all_labels(1,sizetesting:end)}]}]}];
+
+[data_mean_area, data_mean_r2r, data_bpm, data_p2p, data_systolic, ...
+    data_diastolic, data_pulse] = extract_data(all_data);
+
+% Store the raw data.
+data_mean_area_per_file{DATA_CELL_RAW,i} = data_mean_area;
+data_mean_r2r_per_file{DATA_CELL_RAW,i} = data_mean_r2r;
+data_bpm_per_file{DATA_CELL_RAW,i} = data_bpm;
+data_p2p_per_file{DATA_CELL_RAW,i} = data_p2p;
+data_systolic_per_file{DATA_CELL_RAW,i} = data_systolic;
+data_diastolic_per_file{DATA_CELL_RAW,i} = data_diastolic;
+data_pulse_per_file{DATA_CELL_RAW,i} = data_pulse;
+
+% Split the data into training and testing data.
+% 2/3 of the data is for training. 1/3 is for testing.
+size_data = int32(size(data_mean_area,2));
+size_training = 2. / 3. * size_data;
+data_mean_area_per_file{DATA_CELL_TRAINING,i} = data_mean_area(:,1:size_training);
+data_mean_r2r_per_file{DATA_CELL_TRAINING,i} = data_mean_r2r(:,1:size_training);
+data_bpm_per_file{DATA_CELL_TRAINING,i} = data_bpm(:,1:size_training);
+data_p2p_per_file{DATA_CELL_TRAINING,i} = data_p2p(:,1:size_training);
+data_systolic_per_file{DATA_CELL_TRAINING,i} = data_systolic(:,1:size_training);
+data_diastolic_per_file{DATA_CELL_TRAINING,i} = data_diastolic(:,1:size_training);
+data_pulse_per_file{DATA_CELL_TRAINING,i} = data_pulse(:,1:size_training);
+
+% Create the testing data.
+data_mean_area_per_file{DATA_CELL_TESTING,i} = data_mean_area(:,size_training:size_data);
+data_mean_r2r_per_file{DATA_CELL_TESTING,i} = data_mean_r2r(:,size_training:size_data);
+data_bpm_per_file{DATA_CELL_TESTING,i} = data_bpm(:,size_training:size_data);
+data_p2p_per_file{DATA_CELL_TESTING,i} = data_p2p(:,size_training:size_data);
+data_systolic_per_file{DATA_CELL_TESTING,i} = data_systolic(:,size_training:size_data);
+data_diastolic_per_file{DATA_CELL_TESTING,i} = data_diastolic(:,size_training:size_data);
+data_pulse_per_file{DATA_CELL_TESTING,i} = data_pulse(:,size_training:size_data);
+end
+
+% Delete temporary variables from our loop.
+clearvars data_mean_area data_mean_r2r data_bpm data_p2p data_systolic ...
+    data_diastolic data_pulse;
+
+% For easier access, we take the 9 cells of our "per_file" cell arrays
+% and concatenate them into one massive "collective" matrix.
+%
+% The "collective" variables store all of our patient data in one matrix
+% per data type.
+data_mean_area_collective = floor([data_mean_area_per_file{:}]);
+data_mean_r2r_collective = floor([data_mean_r2r_per_file{:}]);
+data_bpm_collective = floor([data_bpm_per_file{:}]);
+data_p2p_collective = floor([data_p2p_per_file{:}]);
+data_systolic_collective = floor([data_systolic_per_file{:}]);
+data_diastolic_collective = floor([data_diastolic_per_file{:}]);
+data_pulse_collective = floor([data_pulse_per_file{:}]);
+
+% Split the data into training and testing data.
+% 2/3 of the data is for training. 1/3 is for testing.
+%
+% Note: This is old code. It is the collective set of training and testing
+% data, but that is not used in our project afaik.
+size_data = int32(size(data_mean_area_collective,2));
+size_training = 2. / 3. * size_data;
+data_mean_area_training = data_mean_area_collective(:,1:size_training);
+data_mean_r2r_training = data_mean_r2r_collective(:,1:size_training);
+data_bpm_training = data_bpm_collective(:,1:size_training);
+data_p2p_training = data_p2p_collective(:,1:size_training);
+data_systolic_training = data_systolic_collective(:,1:size_training);
+data_diastolic_training = data_diastolic_collective(:,1:size_training);
+data_pulse_training = data_pulse_collective(:,1:size_training);
+
+% Create the testing data.
+data_mean_area_testing = data_mean_area_collective(:,size_training:size_data);
+data_mean_r2r_testing = data_mean_r2r_collective(:,size_training:size_data);
+data_bpm_testing = data_bpm_collective(:,size_training:size_data);
+data_p2p_testing = data_p2p_collective(:,size_training:size_data);
+data_systolic_testing = data_systolic_collective(:,size_training:size_data);
+data_diastolic_testing = data_diastolic_collective(:,size_training:size_data);
+data_pulse_testing = data_pulse_collective(:,size_training:size_data);
+
+fclose(fid);
+
+
+
