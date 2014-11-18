@@ -36,6 +36,7 @@ data_p2p_per_file = cell(NUM_DATA_CELLS,9);
 data_systolic_per_file = cell(NUM_DATA_CELLS,9);
 data_diastolic_per_file = cell(NUM_DATA_CELLS,9);
 data_pulse_per_file = cell(NUM_DATA_CELLS,9);
+labels_per_file = cell(1, NUM_PATIENTS);
 
 
 %% Task 0.
@@ -61,6 +62,7 @@ data_p2p_per_file{DATA_CELL_RAW,i} = data_p2p;
 data_systolic_per_file{DATA_CELL_RAW,i} = data_systolic;
 data_diastolic_per_file{DATA_CELL_RAW,i} = data_diastolic;
 data_pulse_per_file{DATA_CELL_RAW,i} = data_pulse;
+labels_per_file{1, i} = all_labels;
 
 % Split the data into training and testing data.
 % 2/3 of the data is for training. 1/3 is for testing.
@@ -125,7 +127,17 @@ data_systolic_testing = data_systolic_collective(:,size_training:size_data);
 data_diastolic_testing = data_diastolic_collective(:,size_training:size_data);
 data_pulse_testing = data_pulse_collective(:,size_training:size_data);
 
+
+%% Task 1
+% 1.1
+for i = 1:NUM_PATIENTS
+    % Calculate H0 and H1.
+    % H0 is the probability that there is no patient abnomality.
+    H0 = sum(labels_per_file{1, i} == 0) / size(labels_per_file{1, i}, 2);
+    % H1 is the probability that there is a patient abnomality.
+    H1 = 1.0 - H0;
+    freq_mean_area = tabulate(floor(data_mean_area_per_file{DATA_CELL_RAW, i}));
+    freq_mean_area(:,3) = freq_mean_area(:,3) / 100.0;
+end % i to NUM_PATIENTS
+
 fclose(fid);
-
-
-
