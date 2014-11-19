@@ -58,8 +58,40 @@ patient=struct('all',all_data,'labels',all_labels,'trainingData', ...
     'bpm',all_data(3,sizetesting:end),'p2p_bp',all_data(4,sizetesting:end), ...
     'systolic',all_data(5,sizetesting:end),'diastolic',all_data(6,sizetesting:end)...
     ,'pulse_pr',all_data(7,sizetesting:end),'golden',all_labels(1,sizetesting:end)),'testingLabels',all_labels(1,sizetesting:end));
+trgolden = [];
+trnongolden = [];
+gcntr=1;
+ngcntr=1;
+for j=1:sizetraining
+    if patient.trainingData.golden(j)==1
+        trgolden(1:7,gcntr)=patient.all(1:7,j);
+                        gcntr=gcntr+1;
+    else
+                trnongolden(1:7,ngcntr)=patient.all(1:7,j);
+                ngcntr=ngcntr+1;
+    end;
+end;
+    patient.trainingGolden=trgolden;
+   patient.trainingNonGolden=trnongolden;
 
-    
+  trgolden = [];
+trnongolden = [];
+gcntr=1;
+ngcntr=1;
+for j=1:size(patient.testingData.golden,2)
+    k=(j+sizetesting-1);
+    if patient.testingData.golden(j)==1
+        trgolden(1:7,gcntr)=patient.all(1:7,k);
+          gcntr=gcntr+1;
+    else
+                trnongolden(1:7,ngcntr)=patient.all(1:7,k);
+                ngcntr=ngcntr+1;
+    end;
+end;
+    patient.testingGolden=trgolden;
+   patient.testingNonGolden=trnongolden;
+   
+   
 patients=[patients,patient];
 [data_mean_area, data_mean_r2r, data_bpm, data_p2p, data_systolic, ...
     data_diastolic, data_pulse] = extract_data(all_data);
@@ -151,8 +183,9 @@ for i = 1:NUM_PATIENTS
     % H1 is the probability that there is a patient abnomality.
     p_H1(i) = 1.0 - p_H0(i);
     
+    
     freq_mean_area = tabulate(floor(data_mean_area_per_file{DATA_CELL_RAW, i}));
-    freq_mean_area(:,3) = freq_mean_area(:,3) / 100.0;
+    freq_mean_area(:,3) = freq_mean_area(:,3) / 100.0
 end % i to NUM_PATIENTS
 
 

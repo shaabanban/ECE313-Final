@@ -43,16 +43,55 @@ labels_per_file = cell(1, NUM_PATIENTS);
 fprintf(fid, 'Task 0\n\n');
 for i = 1:NUM_PATIENTS
 load(filenames{i});
-floor(all_data);
+all_data=floor(all_data);
 sizetraining=int32(size(all_data,2)*2./3.);
 sizetesting=sizetraining+1;
 sizetotal=size(all_data);
-;
-patient=struct('all',all_data,'labels',all_labels,'trainingData', ...
-    all_data(1:7,1:sizetraining),'trainingLabels',all_labels(1,1:sizetraining), ...
-    'testingData',all_data(1:7,sizetesting:end),'testingLabels',all_labels(1,sizetesting:end));
 
-    
+
+patient=struct('all',all_data,'labels',all_labels,'trainingData', ...
+    struct('area', all_data(1,1:sizetraining),'rr',all_data(2,1:sizetraining), ...
+    'bpm',all_data(3,1:sizetraining),'p2p_bp',all_data(4,1:sizetraining), ...
+    'systolic',all_data(5,1:sizetraining),'diastolic',all_data(6,1:sizetraining)...
+    ,'pulse_pr',all_data(7,1:sizetraining),'golden',all_labels(1,1:sizetraining)),'trainingLabels',all_labels(1,1:sizetraining), ...
+    'testingData',struct('area', all_data(1,sizetesting:end),'rr',all_data(2,sizetesting:end), ...
+    'bpm',all_data(3,sizetesting:end),'p2p_bp',all_data(4,sizetesting:end), ...
+    'systolic',all_data(5,sizetesting:end),'diastolic',all_data(6,sizetesting:end)...
+    ,'pulse_pr',all_data(7,sizetesting:end),'golden',all_labels(1,sizetesting:end)),'testingLabels',all_labels(1,sizetesting:end));
+trgolden = [];
+trnongolden = [];
+gcntr=1;
+ngcntr=1;
+for j=1:sizetraining
+    if patient.trainingData.golden(j)==1
+        trgolden(gcntr)=patient.all(j);
+                        gcntr=gcntr+1;
+    else
+                trnongolden(ngcntr)=patient.all(j);
+                ngcntr=ngcntr+1;
+    end;
+end;
+    patient.trainingGolden=trgolden;
+   patient.trainingNonGolden=trnongolden;
+
+  trgolden = [];
+trnongolden = [];
+gcntr=1;
+ngcntr=1;
+for j=1:size(patient.testingData.golden)
+    k=(j+sizetesting-1);
+    if patient.testingData.golden(j)==1
+        trgolden(gcntr)=patient.all(1:7,k);
+          gcntr=gcntr+1;
+    else
+                trnongolden(ngcntr)=patient.all(k);
+                ngcntr=ngcntr+1;
+    end;
+end;
+    patient.testingGolden=trgolden;
+   patient.testingNonGolden=trnongolden;
+   
+   
 patients=[patients,patient];
 [data_mean_area, data_mean_r2r, data_bpm, data_p2p, data_systolic, ...
     data_diastolic, data_pulse] = extract_data(all_data);
@@ -133,14 +172,22 @@ data_pulse_testing = data_pulse_collective(:,size_training:size_data);
 
 %% Task 1
 % 1.1
+
+p_H0 = (NUM_PATIENTS);
+p_H1 = (NUM_PATIENTS);
+
 for i = 1:NUM_PATIENTS
     % Calculate H0 and H1.
     % H0 is the probability that there is no patient abnomality.
-    H0 = sum(labels_per_file{1, i} == 0) / size(labels_per_file{1, i}, 2);
+    p_H0(i) = sum(patients(i).trainingLabels) / size(patients(i).trainingLabels, 2);
     % H1 is the probability that there is a patient abnomality.
-    H1 = 1.0 - H0;
+    p_H1(i) = 1.0 - p_H0(i);
+    
+    
     freq_mean_area = tabulate(floor(data_mean_area_per_file{DATA_CELL_RAW, i}));
-    freq_mean_area(:,3) = freq_mean_area(:,3) / 100.0;
+    freq_mean_area(:,3) = freq_mean_area(:,3) / 100.0
 end % i to NUM_PATIENTS
+
+
 
 fclose(fid);
