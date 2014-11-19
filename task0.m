@@ -108,77 +108,8 @@ end;
    patient.training_matrix=training_matrix;
    
 patients=[patients,patient];
-[data_mean_area, data_mean_r2r, data_bpm, data_p2p, data_systolic, ...
-    data_diastolic, data_pulse] = extract_data(all_data);
 
-% Store the raw data.
-data_mean_area_per_file{DATA_CELL_RAW,i} = data_mean_area;
-data_mean_r2r_per_file{DATA_CELL_RAW,i} = data_mean_r2r;
-data_bpm_per_file{DATA_CELL_RAW,i} = data_bpm;
-data_p2p_per_file{DATA_CELL_RAW,i} = data_p2p;
-data_systolic_per_file{DATA_CELL_RAW,i} = data_systolic;
-data_diastolic_per_file{DATA_CELL_RAW,i} = data_diastolic;
-data_pulse_per_file{DATA_CELL_RAW,i} = data_pulse;
-labels_per_file{1, i} = all_labels;
-
-% Split the data into training and testing data.
-% 2/3 of the data is for training. 1/3 is for testing.
-size_data = int32(size(data_mean_area,2));
-size_training = 2. / 3. * size_data;
-data_mean_area_per_file{DATA_CELL_TRAINING,i} = data_mean_area(:,1:size_training);
-data_mean_r2r_per_file{DATA_CELL_TRAINING,i} = data_mean_r2r(:,1:size_training);
-data_bpm_per_file{DATA_CELL_TRAINING,i} = data_bpm(:,1:size_training);
-data_p2p_per_file{DATA_CELL_TRAINING,i} = data_p2p(:,1:size_training);
-data_systolic_per_file{DATA_CELL_TRAINING,i} = data_systolic(:,1:size_training);
-data_diastolic_per_file{DATA_CELL_TRAINING,i} = data_diastolic(:,1:size_training);
-data_pulse_per_file{DATA_CELL_TRAINING,i} = data_pulse(:,1:size_training);
-
-% Create the testing data.
-data_mean_area_per_file{DATA_CELL_TESTING,i} = data_mean_area(:,size_training:size_data);
-data_mean_r2r_per_file{DATA_CELL_TESTING,i} = data_mean_r2r(:,size_training:size_data);
-data_bpm_per_file{DATA_CELL_TESTING,i} = data_bpm(:,size_training:size_data);
-data_p2p_per_file{DATA_CELL_TESTING,i} = data_p2p(:,size_training:size_data);
-data_systolic_per_file{DATA_CELL_TESTING,i} = data_systolic(:,size_training:size_data);
-data_diastolic_per_file{DATA_CELL_TESTING,i} = data_diastolic(:,size_training:size_data);
-data_pulse_per_file{DATA_CELL_TESTING,i} = data_pulse(:,size_training:size_data);
 end
-
-% For easier access, we take the 9 cells of our "per_file" cell arrays
-% and concatenate them into one massive "collective" matrix.
-%
-% The "collective" variables store all of our patient data in one matrix
-% per data type.
-data_mean_area_collective = floor([data_mean_area_per_file{:}]);
-data_mean_r2r_collective = floor([data_mean_r2r_per_file{:}]);
-data_bpm_collective = floor([data_bpm_per_file{:}]);
-data_p2p_collective = floor([data_p2p_per_file{:}]);
-data_systolic_collective = floor([data_systolic_per_file{:}]);
-data_diastolic_collective = floor([data_diastolic_per_file{:}]);
-data_pulse_collective = floor([data_pulse_per_file{:}]);
-
-% Split the data into training and testing data.
-% 2/3 of the data is for training. 1/3 is for testing.
-%
-% Note: This is old code. It is the collective set of training and testing
-% data, but that is not used in our project afaik.
-size_data = int32(size(data_mean_area_collective,2));
-size_training = 2. / 3. * size_data;
-data_mean_area_training = data_mean_area_collective(:,1:size_training);
-data_mean_r2r_training = data_mean_r2r_collective(:,1:size_training);
-data_bpm_training = data_bpm_collective(:,1:size_training);
-data_p2p_training = data_p2p_collective(:,1:size_training);
-data_systolic_training = data_systolic_collective(:,1:size_training);
-data_diastolic_training = data_diastolic_collective(:,1:size_training);
-data_pulse_training = data_pulse_collective(:,1:size_training);
-
-% Create the testing data.
-data_mean_area_testing = data_mean_area_collective(:,size_training:size_data);
-data_mean_r2r_testing = data_mean_r2r_collective(:,size_training:size_data);
-data_bpm_testing = data_bpm_collective(:,size_training:size_data);
-data_p2p_testing = data_p2p_collective(:,size_training:size_data);
-data_systolic_testing = data_systolic_collective(:,size_training:size_data);
-data_diastolic_testing = data_diastolic_collective(:,size_training:size_data);
-data_pulse_testing = data_pulse_collective(:,size_training:size_data);
 
 
 %% Task 0 Cleanup
@@ -199,6 +130,7 @@ H0 = {};
 for i = 1:NUM_PATIENTS
     % Calculate H0 and H1.
     
+    figure
     for j = 1:7
         
         %h0
@@ -228,10 +160,8 @@ for i = 1:NUM_PATIENTS
         legend('H1 pmf','H0 pmf');
     
     end
-    figure
     
-    % H0 is the probability that there is no patient abnomality.
-   
+    % H0 is the probability that there is no patient abnomality
     
     % Tabulate a feature to get its frequency data.
     %[freq_mean_area_h1, freq_mean_area_h0] = get_likelihood_h1(patients(i), DATA_MEAN_HEART_BEAT_AREA);
@@ -243,12 +173,8 @@ for i = 1:NUM_PATIENTS
     %[H1{i,6}, H0{i,6}] = get_likelihood_h1(patients(i), 6);
     %[H1{i,7}, H0{i,7}] = get_likelihood_h1(patients(i), 7);
 
-    
-    
-    
+   
 end % i to NUM_PATIENTS
-
-
 
 
 
