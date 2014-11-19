@@ -1,6 +1,6 @@
 % vim:noexpandtab tabstop=4
 
-function [feature] = crosstab_f(dset1, dset2)
+function [feature] = crosstab_f(dset1, dset2,H0,H1)
 % The probabilities are divided by 100% to make the likelihood matrix.
 % Zero extend the feature matrix so that H1 and H0 have the same size.
 % Concatenate the golden and non-golden alarms to find their min/maxes.

@@ -71,14 +71,6 @@ for j=1:sizetraining
                 ngcntr=ngcntr+1;
     end;
 end;
-training_matrix=[];
-testing_matrix=[];
-
-for j=1:7
-    training_matrix=[training_matrix,{    crosstab_f(patient.trainingGolden(j,:),patient.trainingNonGolden(j,:))}];
-    crosstab_f(patient.testingGolden(j,:),patient.testingNonGolden(j,:));
-
-end;
     patient.trainingGolden=trgolden;
    patient.trainingNonGolden=trnongolden;
 
@@ -99,6 +91,21 @@ end;
     patient.testingGolden=trgolden;
    patient.testingNonGolden=trnongolden;
    
+     patient.H0 = sum(patient.trainingLabels) / size(patient.trainingLabels, 2);
+    % H1 is the probability that there is a patient abnomality.
+    p_H1 = 1.0 - p_H0;
+  
+
+   training_matrix=[];
+    testing_matrix=[];
+
+for j=1:7
+    training_matrix=[training_matrix,{ crosstab_f(patient.trainingNonGolden(j,:),patient.trainingGolden(j,:))}];
+    testing_matrix=[testing_matrix,{crosstab_f(patient.testingNonGolden(j,:),patient.testingGolden(j,:))}];
+end;
+
+   patient.testing_matrix=testing_matrix;
+   patient.training_matrix=training_matrix;
    
 patients=[patients,patient];
 [data_mean_area, data_mean_r2r, data_bpm, data_p2p, data_systolic, ...
@@ -186,16 +193,63 @@ clearvars data_mean_area data_mean_r2r data_bpm data_p2p data_systolic ...
 p_H0 = (NUM_PATIENTS);
 p_H1 = (NUM_PATIENTS);
 
+H1 = {};
+H0 = {};
+
 for i = 1:NUM_PATIENTS
     % Calculate H0 and H1.
+    
+    for j = 1:7
+        
+        %h0
+        subplot(7,1,j)
+        plot(patients(i).training_matrix{j}(:,1),patients(i).training_matrix{j}(:,2));
+        %h1
+        hold on
+        plot(patients(i).training_matrix{j}(:,1),patients(i).training_matrix{j}(:,3));
+        
+        switch j
+            case 1
+                title('Mean Area under the heart beat');
+            case 2
+                title('Mean R-to-R peak interval');
+            case 3
+                title('Number of beats per minute');
+            case 4
+                title('Peak to peak interval for blood pressure');
+            case 5
+                title('Systolic Blood Pressure');
+            case 6
+                title('Diastolic Blood Pressure');
+            case 7
+                title('Pulse Pressure');       
+        end
+        
+        legend('H1 pmf','H0 pmf');
+    
+    end
+    figure
+    
     % H0 is the probability that there is no patient abnomality.
-    p_H0(i) = sum(patients(i).trainingLabels) / size(patients(i).trainingLabels, 2);
-    % H1 is the probability that there is a patient abnomality.
-    p_H1(i) = 1.0 - p_H0(i);
+   
     
     % Tabulate a feature to get its frequency data.
-    [freq_mean_area_h1, freq_mean_area_h0] = get_likelihood_h1(patients(i), DATA_MEAN_HEART_BEAT_AREA);
+    %[freq_mean_area_h1, freq_mean_area_h0] = get_likelihood_h1(patients(i), DATA_MEAN_HEART_BEAT_AREA);
+    %[H1{i,1}, H0{i,1}] = get_likelihood_h1(patients(i), 1);
+    %[H1{i,2}, H0{i,2}] = get_likelihood_h1(patients(i), 2);
+    %[H1{i,3}, H0{i,3}] = get_likelihood_h1(patients(i), 3);
+    %[H1{i,4}, H0{i,4}] = get_likelihood_h1(patients(i), 4);
+    %[H1{i,5}, H0{i,5}] = get_likelihood_h1(patients(i), 5);
+    %[H1{i,6}, H0{i,6}] = get_likelihood_h1(patients(i), 6);
+    %[H1{i,7}, H0{i,7}] = get_likelihood_h1(patients(i), 7);
+
+    
+    
+    
 end % i to NUM_PATIENTS
+
+
+
 
 
 %% Task 1.1 Cleanup

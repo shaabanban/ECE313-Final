@@ -90,12 +90,18 @@ for j=1:size(patient.testingData.golden,2)
 end;
     patient.testingGolden=trgolden;
    patient.testingNonGolden=trnongolden;
+   
+     patient.H0 = sum(patient.trainingLabels) / size(patient.trainingLabels, 2);
+    % H1 is the probability that there is a patient abnomality.
+     patient.H1 = 1.0 -  patient.H0;
+  
+
    training_matrix=[];
-testing_matrix=[];
+    testing_matrix=[];
 
 for j=1:7
-    training_matrix=[training_matrix,{ crosstab_f(patient.trainingNonGolden(j,:),patient.trainingGolden(j,:))}];
-    testing_matrix=[testing_matrix,{crosstab_f(patient.testingNonGolden(j,:),patient.testingGolden(j,:))}];
+    training_matrix=[training_matrix,{ crosstab_f(patient.trainingGolden(j,:),patient.trainingNonGolden(j,:))}];
+    testing_matrix=[testing_matrix,{crosstab_f(patient.testingGolden(j,:),patient.testingNonGolden(j,:),patient.H0,patient.H1)}];
 end;
 
    patient.testing_matrix=testing_matrix;
@@ -225,9 +231,7 @@ for i = 1:NUM_PATIENTS
     figure
     
     % H0 is the probability that there is no patient abnomality.
-    p_H0(i) = sum(patients(i).trainingLabels) / size(patients(i).trainingLabels, 2);
-    % H1 is the probability that there is a patient abnomality.
-    p_H1(i) = 1.0 - p_H0(i);
+   
     
     % Tabulate a feature to get its frequency data.
     %[freq_mean_area_h1, freq_mean_area_h0] = get_likelihood_h1(patients(i), DATA_MEAN_HEART_BEAT_AREA);
