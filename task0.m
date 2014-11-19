@@ -192,12 +192,19 @@ H0 = {};
 
 for i = 1:NUM_PATIENTS
     % Calculate H0 and H1.
-    %h0
-    bar(patients(i).training_matrix{1}(:,1),patients(i).training_matrix{1}(:,2));
-   %h1
-      bar(patients(i).training_matrix{1}(:,1),patients(i).training_matrix{1}(:,3));
-
     
+    
+    for j = 1:7
+        
+        %h0
+        subplot(7,1,1)
+        plot(patients(i).training_matrix{1}(:,1),patients(i).training_matrix{1}(:,2));
+        %h1
+        hold on
+        plot(patients(i).training_matrix{1}(:,1),patients(i).training_matrix{1}(:,3));
+    
+    end
+   
     % H0 is the probability that there is no patient abnomality.
     p_H0(i) = sum(patients(i).trainingLabels) / size(patients(i).trainingLabels, 2);
     % H1 is the probability that there is a patient abnomality.
@@ -205,20 +212,14 @@ for i = 1:NUM_PATIENTS
     
     % Tabulate a feature to get its frequency data.
     %[freq_mean_area_h1, freq_mean_area_h0] = get_likelihood_h1(patients(i), DATA_MEAN_HEART_BEAT_AREA);
-    [H1{i,1}, H0{i,1}] = get_likelihood_h1(patients(i), 1);
-    [H1{i,2}, H0{i,2}] = get_likelihood_h1(patients(i), 2);
-    [H1{i,3}, H0{i,3}] = get_likelihood_h1(patients(i), 3);
-    [H1{i,4}, H0{i,4}] = get_likelihood_h1(patients(i), 4);
-    [H1{i,5}, H0{i,5}] = get_likelihood_h1(patients(i), 5);
-    [H1{i,6}, H0{i,6}] = get_likelihood_h1(patients(i), 6);
-    [H1{i,7}, H0{i,7}] = get_likelihood_h1(patients(i), 7);
+    %[H1{i,1}, H0{i,1}] = get_likelihood_h1(patients(i), 1);
+    %[H1{i,2}, H0{i,2}] = get_likelihood_h1(patients(i), 2);
+    %[H1{i,3}, H0{i,3}] = get_likelihood_h1(patients(i), 3);
+    %[H1{i,4}, H0{i,4}] = get_likelihood_h1(patients(i), 4);
+    %[H1{i,5}, H0{i,5}] = get_likelihood_h1(patients(i), 5);
+    %[H1{i,6}, H0{i,6}] = get_likelihood_h1(patients(i), 6);
+    %[H1{i,7}, H0{i,7}] = get_likelihood_h1(patients(i), 7);
 
-    subplot(7,i,1);
-    plot(H1{i,1});
-    hold on;
-    plot(H0{i,1});
-    legend('H1 pmf','H0 pmf');
-    figure;
     
     
     
