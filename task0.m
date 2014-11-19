@@ -186,22 +186,7 @@ for i = 1:NUM_PATIENTS
     p_H1(i) = 1.0 - p_H0(i);
     
     % Tabulate a feature to get its frequency data.
-    freq_mean_area = tabulate(patients(i).trainingGolden(DATA_MEAN_HEART_BEAT_AREA,:));
-    % The probabilities are divided by 100% to make the likelihood matrix.
-    freq_mean_area(:,3) = freq_mean_area(:,3) / 100.0;
-    % Zero extend the feature matrix so that H1 and H0 have the same size.
-    % Concatenate the golden and non-golden alarms to find their min/maxes.
-    max_val = max([
-        patients(i).trainingGolden(DATA_MEAN_HEART_BEAT_AREA,:) ...
-        patients(i).trainingNonGolden(DATA_MEAN_HEART_BEAT_AREA,:) ]);
-    min_val = min([
-        patients(i).trainingGolden(DATA_MEAN_HEART_BEAT_AREA,:) ...
-        patients(i).trainingNonGolden(DATA_MEAN_HEART_BEAT_AREA,:) ]);
-    diff = min(freq_mean_area(:,1)) - min_val;
-    lower_bound_zeros = zeros(diff, 3);
-    diff = max_val - max(freq_mean_area(:,1));
-    upper_bound_zeros = zeros(diff, 3);
-    freq_mean_area = [lower_bound_zeros; freq_mean_area; upper_bound_zeros];
+    freq_mean_area = get_likelihood_h1(patients(i), DATA_MEAN_HEART_BEAT_AREA);
 end % i to NUM_PATIENTS
 
 
