@@ -185,6 +185,11 @@ for i = 1:NUM_PATIENTS
     % H1 is the probability that there is a patient abnomality.
     p_H1(i) = 1.0 - p_H0(i);
     
+    % Tabulate a feature to get its frequency data.
+    freq_mean_area = tabulate(patients(i).trainingGolden(DATA_MEAN_HEART_BEAT_AREA,:));
+    % The probabilities are divided by 100% to make the likelihood matrix.
+    freq_mean_area(:,3) = freq_mean_area(:,3) / 100.0;
+    % Zero extend the feature matrix so that H1 and H0 have the same size.
     % Concatenate the golden and non-golden alarms to find their min/maxes.
     max_val = max([
         patients(i).trainingGolden(DATA_MEAN_HEART_BEAT_AREA,:) ...
@@ -192,15 +197,16 @@ for i = 1:NUM_PATIENTS
     min_val = min([
         patients(i).trainingGolden(DATA_MEAN_HEART_BEAT_AREA,:) ...
         patients(i).trainingNonGolden(DATA_MEAN_HEART_BEAT_AREA,:) ]);
-    % Tabulate a feature to get its frequency data.
-    freq_mean_area = tabulate(patients(i).trainingGolden(DATA_MEAN_HEART_BEAT_AREA,:));
-    % The probabilities are divided by 100% to make the likelihood matrix.
-    freq_mean_area(:,3) = freq_mean_area(:,3) / 100.0;
+    diff = min(freq_mean_area(:,1)) - min_val;
+    lower_bound_zeros = zeros(diff, 3);
+    diff = max_val - max(freq_mean_area(:,1));
+    upper_bound_zeros = zeros(diff, 3);
+    freq_mean_area = [lower_bound_zeros; freq_mean_area; upper_bound_zeros];
 end % i to NUM_PATIENTS
 
 
 %% Task 1.1 Cleanup
-clearvars max_val min_val;
+clearvars max_val min_val diff lower_bound_zeros upper_bound_zeros;
 
 
 fclose(fid);
