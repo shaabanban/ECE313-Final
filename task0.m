@@ -94,8 +94,8 @@ end;
 testing_matrix=[];
 
 for j=1:7
-    training_matrix=[training_matrix,{ crosstab_f(patient.trainingGolden(j,:),patient.trainingNonGolden(j,:))}];
-    testing_matrix=[testing_matrix,{crosstab_f(patient.testingGolden(j,:),patient.testingNonGolden(j,:))}];
+    training_matrix=[training_matrix,{ crosstab_f(patient.trainingNonGolden(j,:),patient.trainingGolden(j,:))}];
+    testing_matrix=[testing_matrix,{crosstab_f(patient.testingNonGolden(j,:),patient.testingGolden(j,:))}];
 end;
 
    patient.testing_matrix=testing_matrix;
@@ -192,6 +192,12 @@ H0 = {};
 
 for i = 1:NUM_PATIENTS
     % Calculate H0 and H1.
+    %h0
+    bar(patients(i).training_matrix{1}(:,1),patients(i).training_matrix{1}(:,2));
+   %h1
+      bar(patients(i).training_matrix{1}(:,1),patients(i).training_matrix{1}(:,3));
+
+    
     % H0 is the probability that there is no patient abnomality.
     p_H0(i) = sum(patients(i).trainingLabels) / size(patients(i).trainingLabels, 2);
     % H1 is the probability that there is a patient abnomality.
