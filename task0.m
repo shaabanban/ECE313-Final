@@ -128,10 +128,6 @@ data_diastolic_per_file{DATA_CELL_TESTING,i} = data_diastolic(:,size_training:si
 data_pulse_per_file{DATA_CELL_TESTING,i} = data_pulse(:,size_training:size_data);
 end
 
-% Delete temporary variables from our loop.
-clearvars data_mean_area data_mean_r2r data_bpm data_p2p data_systolic ...
-    data_diastolic data_pulse;
-
 % For easier access, we take the 9 cells of our "per_file" cell arrays
 % and concatenate them into one massive "collective" matrix.
 %
@@ -170,6 +166,12 @@ data_diastolic_testing = data_diastolic_collective(:,size_training:size_data);
 data_pulse_testing = data_pulse_collective(:,size_training:size_data);
 
 
+%% Task 0 Cleanup
+% Delete temporary variables from our loop.
+clearvars data_mean_area data_mean_r2r data_bpm data_p2p data_systolic ...
+    data_diastolic data_pulse size_data size_training;
+
+
 %% Task 1
 % 1.1
 
@@ -183,11 +185,22 @@ for i = 1:NUM_PATIENTS
     % H1 is the probability that there is a patient abnomality.
     p_H1(i) = 1.0 - p_H0(i);
     
-    
-    freq_mean_area = tabulate(floor(data_mean_area_per_file{DATA_CELL_RAW, i}));
-    freq_mean_area(:,3) = freq_mean_area(:,3) / 100.0
+    % Concatenate the golden and non-golden alarms to find their min/maxes.
+    max_val = max([
+        patients(i).trainingGolden(DATA_MEAN_HEART_BEAT_AREA,:) ...
+        patients(i).trainingNonGolden(DATA_MEAN_HEART_BEAT_AREA,:) ]);
+    min_val = min([
+        patients(i).trainingGolden(DATA_MEAN_HEART_BEAT_AREA,:) ...
+        patients(i).trainingNonGolden(DATA_MEAN_HEART_BEAT_AREA,:) ]);
+    % Tabulate a feature to get its frequency data.
+    freq_mean_area = tabulate(patients(i).trainingGolden(DATA_MEAN_HEART_BEAT_AREA,:));
+    % The probabilities are divided by 100% to make the likelihood matrix.
+    freq_mean_area(:,3) = freq_mean_area(:,3) / 100.0;
 end % i to NUM_PATIENTS
 
+
+%% Task 1.1 Cleanup
+clearvars max_val min_val;
 
 
 fclose(fid);
