@@ -71,6 +71,14 @@ for j=1:sizetraining
                 ngcntr=ngcntr+1;
     end;
 end;
+training_matrix=[];
+testing_matrix=[];
+
+for j=1:7
+    training_matrix=[training_matrix,{    crosstab_f(patient.trainingGolden(j,:),patient.trainingNonGolden(j,:))}];
+    crosstab_f(patient.testingGolden(j,:),patient.testingNonGolden(j,:));
+
+end;
     patient.trainingGolden=trgolden;
    patient.trainingNonGolden=trnongolden;
 
@@ -90,16 +98,7 @@ for j=1:size(patient.testingData.golden,2)
 end;
     patient.testingGolden=trgolden;
    patient.testingNonGolden=trnongolden;
-   training_matrix=[];
-testing_matrix=[];
-
-for j=1:7
-    training_matrix=[training_matrix,{ crosstab_f(patient.trainingGolden(j,:),patient.trainingNonGolden(j,:))}];
-    testing_matrix=[testing_matrix,{crosstab_f(patient.testingGolden(j,:),patient.testingNonGolden(j,:))}];
-end;
-
-   patient.testing_matrix=testing_matrix;
-   patient.training_matrix=training_matrix;
+   
    
 patients=[patients,patient];
 [data_mean_area, data_mean_r2r, data_bpm, data_p2p, data_systolic, ...
