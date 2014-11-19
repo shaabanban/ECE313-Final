@@ -16,10 +16,10 @@ for i=1:(max_val-min_val)
  [~,idx]=ismember([cval],dset1(:,1),'rows');
   [~,idx2]=ismember([cval],dset2(:,1),'rows');
   if idx ~=0
-    result(i,2)=dset1(idx,3);
+    result(i,2)=dset1(idx,3)/100;
   end
     if idx2 ~=0
-            result(i,3)=dset2(idx2,3);
+            result(i,3)=dset2(idx2,3)/100;
      end
     cval=cval+1;
 end
