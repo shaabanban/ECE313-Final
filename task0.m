@@ -126,13 +126,13 @@ p_H1 = (NUM_PATIENTS);
 
 H1 = {};
 H0 = {};
-
+HT_table_array = cell(9, 7);
 for i = 1:NUM_PATIENTS
     % Calculate H0 and H1.
     
     figure
     for j = 1:7
-        
+        HT_table_array(i, j) = patients(i).training_matrix{j};
         %h0
         subplot(7,1,j)
         plot(patients(i).training_matrix{j}(:,1),patients(i).training_matrix{j}(:,2));
