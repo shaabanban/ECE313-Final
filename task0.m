@@ -178,6 +178,9 @@ clearvars data_mean_area data_mean_r2r data_bpm data_p2p data_systolic ...
 p_H0 = (NUM_PATIENTS);
 p_H1 = (NUM_PATIENTS);
 
+H1 = {};
+H0 = {};
+
 for i = 1:NUM_PATIENTS
     % Calculate H0 and H1.
     % H0 is the probability that there is no patient abnomality.
@@ -186,8 +189,28 @@ for i = 1:NUM_PATIENTS
     p_H1(i) = 1.0 - p_H0(i);
     
     % Tabulate a feature to get its frequency data.
-    [freq_mean_area_h1, freq_mean_area_h0] = get_likelihood_h1(patients(i), DATA_MEAN_HEART_BEAT_AREA);
+    %[freq_mean_area_h1, freq_mean_area_h0] = get_likelihood_h1(patients(i), DATA_MEAN_HEART_BEAT_AREA);
+    [H1{i,1}, H0{i,1}] = get_likelihood_h1(patients(i), 1);
+    [H1{i,2}, H0{i,2}] = get_likelihood_h1(patients(i), 2);
+    [H1{i,3}, H0{i,3}] = get_likelihood_h1(patients(i), 3);
+    [H1{i,4}, H0{i,4}] = get_likelihood_h1(patients(i), 4);
+    [H1{i,5}, H0{i,5}] = get_likelihood_h1(patients(i), 5);
+    [H1{i,6}, H0{i,6}] = get_likelihood_h1(patients(i), 6);
+    [H1{i,7}, H0{i,7}] = get_likelihood_h1(patients(i), 7);
+
+    subplot(7,i,1);
+    plot(H1{i,1});
+    hold on;
+    plot(H0{i,1});
+    legend('H1 pmf','H0 pmf');
+    figure;
+    
+    
+    
 end % i to NUM_PATIENTS
+
+
+
 
 
 %% Task 1.1 Cleanup
