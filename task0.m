@@ -186,7 +186,7 @@ for i = 1:NUM_PATIENTS
     p_H1(i) = 1.0 - p_H0(i);
     
     % Tabulate a feature to get its frequency data.
-    freq_mean_area = get_likelihood_h1(patients(i), DATA_MEAN_HEART_BEAT_AREA);
+    [freq_mean_area_h1, freq_mean_area_h0] = get_likelihood_h1(patients(i), DATA_MEAN_HEART_BEAT_AREA);
 end % i to NUM_PATIENTS
 
 
