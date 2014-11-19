@@ -132,7 +132,7 @@ for i = 1:NUM_PATIENTS
     
     figure
     for j = 1:7
-        HT_table_array(i, j) = patients(i).training_matrix{j};
+        HT_table_array(i, j) = {patients(i).training_matrix{j}};
         %h0
         subplot(7,1,j)
         plot(patients(i).training_matrix{j}(:,1),patients(i).training_matrix{j}(:,2));
