@@ -193,18 +193,37 @@ H0 = {};
 for i = 1:NUM_PATIENTS
     % Calculate H0 and H1.
     
-    
     for j = 1:7
         
         %h0
-        subplot(7,1,1)
-        plot(patients(i).training_matrix{1}(:,1),patients(i).training_matrix{1}(:,2));
+        subplot(7,1,j)
+        plot(patients(i).training_matrix{j}(:,1),patients(i).training_matrix{j}(:,2));
         %h1
         hold on
-        plot(patients(i).training_matrix{1}(:,1),patients(i).training_matrix{1}(:,3));
+        plot(patients(i).training_matrix{j}(:,1),patients(i).training_matrix{j}(:,3));
+        
+        switch j
+            case 1
+                title('Mean Area under the heart beat');
+            case 2
+                title('Mean R-to-R peak interval');
+            case 3
+                title('Number of beats per minute');
+            case 4
+                title('Peak to peak interval for blood pressure');
+            case 5
+                title('Systolic Blood Pressure');
+            case 6
+                title('Diastolic Blood Pressure');
+            case 7
+                title('Pulse Pressure');       
+        end
+        
+        legend('H1 pmf','H0 pmf');
     
     end
-   
+    figure
+    
     % H0 is the probability that there is no patient abnomality.
     p_H0(i) = sum(patients(i).trainingLabels) / size(patients(i).trainingLabels, 2);
     % H1 is the probability that there is a patient abnomality.
