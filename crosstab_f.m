@@ -10,7 +10,7 @@ min_val = min([dset1,dset2]);
 dset1=tabulate(dset1);
 dset2=tabulate(dset2);
 cval=min_val;
-result=zeros(max_val-min_val,3);
+result=zeros(max_val-min_val,5);
 for i=1:(max_val-min_val)
       result(i,1)=cval;
  [~,idx]=ismember([cval],dset1(:,1),'rows');
@@ -20,6 +20,14 @@ for i=1:(max_val-min_val)
   end
     if idx2 ~=0
             result(i,3)=dset2(idx2,3)/100;
+    end
+     if result(i,2)>=result(i,3)
+         result(i,4)=1;
+         
+     end
+     if (result(i,2)*H1)>=(result(i,3)*H0)
+         result(i,5)=1;
+         
      end
     cval=cval+1;
 end

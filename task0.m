@@ -100,7 +100,7 @@ end;
     testing_matrix=[];
 
 for j=1:7
-    training_matrix=[training_matrix,{ crosstab_f(patient.trainingGolden(j,:),patient.trainingNonGolden(j,:))}];
+    training_matrix=[training_matrix,{ crosstab_f(patient.trainingGolden(j,:),patient.trainingNonGolden(j,:),patient.H0,patient.H1)}];
     testing_matrix=[testing_matrix,{crosstab_f(patient.testingGolden(j,:),patient.testingNonGolden(j,:),patient.H0,patient.H1)}];
 end;
 
@@ -164,15 +164,6 @@ for i = 1:NUM_PATIENTS
     % H0 is the probability that there is no patient abnomality
     
     % Tabulate a feature to get its frequency data.
-    %[freq_mean_area_h1, freq_mean_area_h0] = get_likelihood_h1(patients(i), DATA_MEAN_HEART_BEAT_AREA);
-    %[H1{i,1}, H0{i,1}] = get_likelihood_h1(patients(i), 1);
-    %[H1{i,2}, H0{i,2}] = get_likelihood_h1(patients(i), 2);
-    %[H1{i,3}, H0{i,3}] = get_likelihood_h1(patients(i), 3);
-    %[H1{i,4}, H0{i,4}] = get_likelihood_h1(patients(i), 4);
-    %[H1{i,5}, H0{i,5}] = get_likelihood_h1(patients(i), 5);
-    %[H1{i,6}, H0{i,6}] = get_likelihood_h1(patients(i), 6);
-    %[H1{i,7}, H0{i,7}] = get_likelihood_h1(patients(i), 7);
-
    
 end % i to NUM_PATIENTS
 
