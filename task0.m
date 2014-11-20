@@ -168,6 +168,8 @@ H1 = {};
 H0 = {};
 HT_table_array = cell(9, 7);
 Error_table_array = cell(9, 7);
+all_map_err=cell(0,3);
+all_ml_err=cell(0,3);
 
 for i = 1:NUM_PATIENTS
     % Calculate H0 and H1.
@@ -185,12 +187,15 @@ for i = 1:NUM_PATIENTS
         etable(2,3)=(sum(patients(i).false_alarms_map(j,:))+sum(patients(i).missed_alarms_map(j,:)))/(size(patients(i).testingLabels,2));
 
         Error_table_array(i, j)={etable};
-        %h0
-        subplot(7,1,j)
-        plot(patients(i).training_matrix{j}(:,1),patients(i).training_matrix{j}(:,2));
+        all_map_err(size(all_map_err,1)+1,:)={i,j,etable(2,3)};
+         all_ml_err(size(all_ml_err,1)+1,:)={i,j,etable(1,3)};
+        
+            %h0
+       subplot(7,1,j)
+       plot(patients(i).training_matrix{j}(:,1),patients(i).training_matrix{j}(:,2));
         %h1
         hold on
-        plot(patients(i).training_matrix{j}(:,1),patients(i).training_matrix{j}(:,3));
+       plot(patients(i).training_matrix{j}(:,1),patients(i).training_matrix{j}(:,3));
         
         switch j
             case 1
@@ -210,15 +215,15 @@ for i = 1:NUM_PATIENTS
         end      
         legend('H1 pmf','H0 pmf'); 
     end
-    
     % H0 is the probability that there is no patient abnomality
     
     % Tabulate a feature to get its frequency data.
    
 end % i to NUM_PATIENTS
-
-
-
+fprintf('ML\n');
+all_ml_err=sortrows(all_ml_err,3)
+fprintf('MAP\n');
+all_map_err=sortrows(all_map_err,3)
 %% Task 1.1 Cleanup
 clearvars max_val min_val diff lower_bound_zeros upper_bound_zeros;
 
