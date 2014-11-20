@@ -167,12 +167,24 @@ p_H1 = (NUM_PATIENTS);
 H1 = {};
 H0 = {};
 HT_table_array = cell(9, 7);
+Error_table_array = cell(9, 7);
+
 for i = 1:NUM_PATIENTS
     % Calculate H0 and H1.
     
     figure
     for j = 1:7
         HT_table_array(i, j) = {patients(i).training_matrix{j}};
+        etable=zeros(2,3);
+        etable(1,1)=sum(patients(i).false_alarms_ml(j,:))/(size(patients(i).testingLabels,2)-sum(patients(i).testingLabels));
+        etable(1,2)=sum(patients(i).missed_alarms_ml(j,:))/(sum(patients(i).testingLabels));
+        etable(1,3)=(sum(patients(i).false_alarms_ml(j,:))+sum(patients(i).missed_alarms_ml(j,:)))/size(patients(i).testingLabels,2);
+       
+        etable(2,1)=sum(patients(i).false_alarms_map(j,:))/(size(patients(i).testingLabels,2)-sum(patients(i).testingLabels));
+        etable(2,2)=sum(patients(i).missed_alarms_map(j,:))/(sum(patients(i).testingLabels));
+        etable(2,3)=(sum(patients(i).false_alarms_map(j,:))+sum(patients(i).missed_alarms_map(j,:)))/(size(patients(i).testingLabels,2));
+
+        Error_table_array(i, j)={etable};
         %h0
         subplot(7,1,j)
         plot(patients(i).training_matrix{j}(:,1),patients(i).training_matrix{j}(:,2));
