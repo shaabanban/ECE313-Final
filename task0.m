@@ -4,7 +4,7 @@ close all;
 clear all;
 patients=[];
 % Open the result file
-fid = fopen('ECE313_Final_Project_group_zeta.txt', 'w');
+%fid = fopen('ECE313_Final_Project_group_zeta.txt', 'w');
 
 % Definitions of all_data rows. From slide 5.
 DATA_MEAN_HEART_BEAT_AREA =     1;
@@ -40,7 +40,7 @@ labels_per_file = cell(1, NUM_PATIENTS);
 
 %% Task 0.
 % Load all data files.
-fprintf(fid, 'Task 0\n\n');
+%fprintf(fid, 'Task 0\n\n');
 for i = 1:NUM_PATIENTS
 load(filenames{i});
 all_data=floor(all_data);
@@ -170,7 +170,10 @@ HT_table_array = cell(9, 7);
 Error_table_array = cell(9, 7);
 all_map_err=cell(0,3);
 all_ml_err=cell(0,3);
+all_comb_corr=cell(0,4);
+all_comb_corr2=cell(0,3);
 
+all_p_dat=zeros(7,0);
 for i = 1:NUM_PATIENTS
     % Calculate H0 and H1.
     
@@ -216,16 +219,41 @@ for i = 1:NUM_PATIENTS
         legend('H1 pmf','H0 pmf'); 
     end
     % H0 is the probability that there is no patient abnomality
-    
+      all_p_dat=[all_p_dat,patients(i).all];
     % Tabulate a feature to get its frequency data.
-   
+   for j=1:7
+       for k=j:7
+           if k~=j           
+             
+        corr1 = corrcoef(patients(i).all(j,:), patients(i).all(k,:));
+                 all_comb_corr(size(all_comb_corr,1)+1,:)={i,j,k,corr1(1,2)};
+
+        %fprintf('Patient %i, Properties %i %i : %f \n',i,j,k, corr1(1,2));
+           end;
+       end;
+   end;
+   %fprintf('\n\n\n\n');
 end % i to NUM_PATIENTS
-fprintf('ML\n');
-all_ml_err=sortrows(all_ml_err,3)
-fprintf('MAP\n');
-all_map_err=sortrows(all_map_err,3)
+%fprintf('ML\n');
+
+ for j=1:7
+       for k=j:7
+           if k~=j           
+             
+        corr1 = corrcoef(all_p_dat(j,:), all_p_dat(k,:));
+                 all_comb_corr2(size(all_comb_corr2,1)+1,:)={j,k,corr1(1,2)};
+
+      % fprintf('Patient %i, Properties %i %i : %f \n',i,j,k, corr1(1,2));
+           end;
+       end;
+   end;
+   
+   
+all_ml_err=sortrows(all_ml_err,3);
+%fprintf('MAP\n');
+all_map_err=sortrows(all_map_err,3);
 %% Task 1.1 Cleanup
 clearvars max_val min_val diff lower_bound_zeros upper_bound_zeros;
 
 
-fclose(fid);
+%fclose(fid);

@@ -91,79 +91,65 @@ end;
     patient.testingGolden=trgolden;
    patient.testingNonGolden=trnongolden;
    
+     patient.H1 = sum(patient.trainingLabels) / size(patient.trainingLabels, 2);
+    % H1 is the probability that there is a patient abnomality.
+     patient.H0 = 1.0 -  patient.H1;
+  
+
+   training_matrix=[];
+    testing_matrix=[];
+
+for j=1:7
+    training_matrix=[training_matrix,{ crosstab_f(patient.trainingGolden(j,:),patient.trainingNonGolden(j,:),patient.H0,patient.H1)}];
+    testing_matrix=[testing_matrix,{crosstab_f(patient.testingGolden(j,:),patient.testingNonGolden(j,:),patient.H0,patient.H1)}];
+end;
+
+   patient.testing_matrix=testing_matrix;
+   patient.training_matrix=training_matrix;
    
+ %calculate alarms
+ alarms_ml=zeros(7,size(patient.testingData.area,2));
+  alarms_map=zeros(7,size(patient.testingData.area,2));
+  false_alarms_map=zeros(7,size(patient.testingData.area,2));
+  missed_alarms_map=zeros(7,size(patient.testingData.area,2));
+ false_alarms_ml=zeros(7,size(patient.testingData.area,2));
+  missed_alarms_ml=zeros(7,size(patient.testingData.area,2));
+for j=1:7
+    current_test_data=all_data(j,sizetesting:end);
+   for k=1:size(patient.testingData.area,2)
+    [~,idx]=ismember([current_test_data(k)],patient.training_matrix{j}(:,1),'rows');  %ML
+    if idx~=0
+        alarms_ml(j,k)=patient.training_matrix{j}(idx,4);
+        alarms_map(j,k)=patient.training_matrix{j}(idx,5);
+    end
+    if patient.testingLabels(k) == 1
+        if alarms_ml(j,k) == 0   %missed alaram ml
+            missed_alarms_ml(j,k)=1;
+        end
+        if alarms_map(j,k) == 0  %missed alaram map
+              missed_alarms_map(j,k)=1;
+        end
+    else
+        if alarms_ml(j,k) == 1              %false alaram ml
+            false_alarms_ml(j,k)=1;
+        end
+        if alarms_map(j,k) == 1              %false alaram map
+            false_alarms_map(j,k)=1;
+        end
+    end;
+   end;
+end;
+patient.alarms_ml=alarms_ml;
+patient.alarms_map=alarms_map;
+patient.false_alarms_map=false_alarms_map;
+patient.false_alarms_ml=false_alarms_ml;
+patient.missed_alarms_map=missed_alarms_map;
+patient.missed_alarms_ml=missed_alarms_ml;
+
+
 patients=[patients,patient];
-[data_mean_area, data_mean_r2r, data_bpm, data_p2p, data_systolic, ...
-    data_diastolic, data_pulse] = extract_data(all_data);
 
-% Store the raw data.
-data_mean_area_per_file{DATA_CELL_RAW,i} = data_mean_area;
-data_mean_r2r_per_file{DATA_CELL_RAW,i} = data_mean_r2r;
-data_bpm_per_file{DATA_CELL_RAW,i} = data_bpm;
-data_p2p_per_file{DATA_CELL_RAW,i} = data_p2p;
-data_systolic_per_file{DATA_CELL_RAW,i} = data_systolic;
-data_diastolic_per_file{DATA_CELL_RAW,i} = data_diastolic;
-data_pulse_per_file{DATA_CELL_RAW,i} = data_pulse;
-labels_per_file{1, i} = all_labels;
-
-% Split the data into training and testing data.
-% 2/3 of the data is for training. 1/3 is for testing.
-size_data = int32(size(data_mean_area,2));
-size_training = 2. / 3. * size_data;
-data_mean_area_per_file{DATA_CELL_TRAINING,i} = data_mean_area(:,1:size_training);
-data_mean_r2r_per_file{DATA_CELL_TRAINING,i} = data_mean_r2r(:,1:size_training);
-data_bpm_per_file{DATA_CELL_TRAINING,i} = data_bpm(:,1:size_training);
-data_p2p_per_file{DATA_CELL_TRAINING,i} = data_p2p(:,1:size_training);
-data_systolic_per_file{DATA_CELL_TRAINING,i} = data_systolic(:,1:size_training);
-data_diastolic_per_file{DATA_CELL_TRAINING,i} = data_diastolic(:,1:size_training);
-data_pulse_per_file{DATA_CELL_TRAINING,i} = data_pulse(:,1:size_training);
-
-% Create the testing data.
-data_mean_area_per_file{DATA_CELL_TESTING,i} = data_mean_area(:,size_training:size_data);
-data_mean_r2r_per_file{DATA_CELL_TESTING,i} = data_mean_r2r(:,size_training:size_data);
-data_bpm_per_file{DATA_CELL_TESTING,i} = data_bpm(:,size_training:size_data);
-data_p2p_per_file{DATA_CELL_TESTING,i} = data_p2p(:,size_training:size_data);
-data_systolic_per_file{DATA_CELL_TESTING,i} = data_systolic(:,size_training:size_data);
-data_diastolic_per_file{DATA_CELL_TESTING,i} = data_diastolic(:,size_training:size_data);
-data_pulse_per_file{DATA_CELL_TESTING,i} = data_pulse(:,size_training:size_data);
 end
-
-% For easier access, we take the 9 cells of our "per_file" cell arrays
-% and concatenate them into one massive "collective" matrix.
-%
-% The "collective" variables store all of our patient data in one matrix
-% per data type.
-data_mean_area_collective = floor([data_mean_area_per_file{:}]);
-data_mean_r2r_collective = floor([data_mean_r2r_per_file{:}]);
-data_bpm_collective = floor([data_bpm_per_file{:}]);
-data_p2p_collective = floor([data_p2p_per_file{:}]);
-data_systolic_collective = floor([data_systolic_per_file{:}]);
-data_diastolic_collective = floor([data_diastolic_per_file{:}]);
-data_pulse_collective = floor([data_pulse_per_file{:}]);
-
-% Split the data into training and testing data.
-% 2/3 of the data is for training. 1/3 is for testing.
-%
-% Note: This is old code. It is the collective set of training and testing
-% data, but that is not used in our project afaik.
-size_data = int32(size(data_mean_area_collective,2));
-size_training = 2. / 3. * size_data;
-data_mean_area_training = data_mean_area_collective(:,1:size_training);
-data_mean_r2r_training = data_mean_r2r_collective(:,1:size_training);
-data_bpm_training = data_bpm_collective(:,1:size_training);
-data_p2p_training = data_p2p_collective(:,1:size_training);
-data_systolic_training = data_systolic_collective(:,1:size_training);
-data_diastolic_training = data_diastolic_collective(:,1:size_training);
-data_pulse_training = data_pulse_collective(:,1:size_training);
-
-% Create the testing data.
-data_mean_area_testing = data_mean_area_collective(:,size_training:size_data);
-data_mean_r2r_testing = data_mean_r2r_collective(:,size_training:size_data);
-data_bpm_testing = data_bpm_collective(:,size_training:size_data);
-data_p2p_testing = data_p2p_collective(:,size_training:size_data);
-data_systolic_testing = data_systolic_collective(:,size_training:size_data);
-data_diastolic_testing = data_diastolic_collective(:,size_training:size_data);
-data_pulse_testing = data_pulse_collective(:,size_training:size_data);
 
 
 %% Task 0 Cleanup
@@ -178,35 +164,75 @@ clearvars data_mean_area data_mean_r2r data_bpm data_p2p data_systolic ...
 p_H0 = (NUM_PATIENTS);
 p_H1 = (NUM_PATIENTS);
 
+H1 = {};
+H0 = {};
+HT_table_array = cell(9, 7);
+Error_table_array = cell(9, 7);
+all_map_err=cell(0,3);
+all_ml_err=cell(0,3);
+
 for i = 1:NUM_PATIENTS
     % Calculate H0 and H1.
-    % H0 is the probability that there is no patient abnomality.
-    p_H0(i) = sum(patients(i).trainingLabels) / size(patients(i).trainingLabels, 2);
-    % H1 is the probability that there is a patient abnomality.
-    p_H1(i) = 1.0 - p_H0(i);
     
-    % Concatenate the golden and non-golden alarms to find their min/maxes.
-    max_val = max([
-        patients(i).trainingGolden(DATA_MEAN_HEART_BEAT_AREA,:) ...
-        patients(i).trainingNonGolden(DATA_MEAN_HEART_BEAT_AREA,:) ]);
-    min_val = min([
-        patients(i).trainingGolden(DATA_MEAN_HEART_BEAT_AREA,:) ...
-        patients(i).trainingNonGolden(DATA_MEAN_HEART_BEAT_AREA,:) ]);
+    figure
+    for j = 1:7
+        HT_table_array(i, j) = {patients(i).training_matrix{j}};
+        etable=zeros(2,3);
+        etable(1,1)=sum(patients(i).false_alarms_ml(j,:))/(size(patients(i).testingLabels,2)-sum(patients(i).testingLabels));
+        etable(1,2)=sum(patients(i).missed_alarms_ml(j,:))/(sum(patients(i).testingLabels));
+        etable(1,3)=(sum(patients(i).false_alarms_ml(j,:))+sum(patients(i).missed_alarms_ml(j,:)))/size(patients(i).testingLabels,2);
+       
+        etable(2,1)=sum(patients(i).false_alarms_map(j,:))/(size(patients(i).testingLabels,2)-sum(patients(i).testingLabels));
+        etable(2,2)=sum(patients(i).missed_alarms_map(j,:))/(sum(patients(i).testingLabels));
+        etable(2,3)=(sum(patients(i).false_alarms_map(j,:))+sum(patients(i).missed_alarms_map(j,:)))/(size(patients(i).testingLabels,2));
+
+        Error_table_array(i, j)={etable};
+        all_map_err(size(all_map_err,1)+1,:)={i,j,etable(2,3)};
+         all_ml_err(size(all_ml_err,1)+1,:)={i,j,etable(1,3)};
+        
+            %h0
+       subplot(7,1,j)
+       plot(patients(i).training_matrix{j}(:,1),patients(i).training_matrix{j}(:,2));
+        %h1
+        hold on
+       plot(patients(i).training_matrix{j}(:,1),patients(i).training_matrix{j}(:,3));
+        
+        switch j
+            case 1
+                title('Mean Area under the heart beat');
+            case 2
+                title('Mean R-to-R peak interval');
+            case 3
+                title('Number of beats per minute');
+            case 4
+                title('Peak to peak interval for blood pressure');
+            case 5
+                title('Systolic Blood Pressure');
+            case 6
+                title('Diastolic Blood Pressure');
+            case 7
+                title('Pulse Pressure');                  
+        end      
+        legend('H1 pmf','H0 pmf'); 
+    end
+    % H0 is the probability that there is no patient abnomality
+    
     % Tabulate a feature to get its frequency data.
-    freq_mean_area = tabulate(patients(i).trainingGolden(DATA_MEAN_HEART_BEAT_AREA,:));
-    % The probabilities are divided by 100% to make the likelihood matrix.
-    freq_mean_area(:,3) = freq_mean_area(:,3) / 100.0;
-    % Zero extend the feature matrix so that H1 and H0 have the same size.
-    diff = min(freq_mean_area(:,1)) - min_val;
-    lower_bound_zeros = zeros(diff, 3);
-    diff = max_val - max(freq_mean_area(:,1));
-    upper_bound_zeros = zeros(diff, 3);
-    freq_mean_area = [lower_bound_zeros; freq_mean_area; upper_bound_zeros];
+   for j=1:7
+       for k=j:7
+           if k
+        corr1 = corrcoef(patients(i).all(j,:), patients(i).all(k,:));
+        fprintf('Patient %i, Properties %i %i : %f \n',i,j,k, corr1(1,2));
+       end;
+   end;
+   fprintf('\n\n\n\n');
 end % i to NUM_PATIENTS
-
-
+%fprintf('ML\n');
+all_ml_err=sortrows(all_ml_err,3);
+%fprintf('MAP\n');
+all_map_err=sortrows(all_map_err,3);
 %% Task 1.1 Cleanup
-clearvars max_val min_val;
+clearvars max_val min_val diff lower_bound_zeros upper_bound_zeros;
 
 
 fclose(fid);
