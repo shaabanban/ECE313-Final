@@ -107,6 +107,24 @@ end;
    patient.testing_matrix=testing_matrix;
    patient.training_matrix=training_matrix;
    
+ %calculate alarms
+ alarms_ml=zeros(7,size(patient.testingData.area,2));
+  alarms_map=zeros(7,size(patient.testingData.area,2));
+
+for j=1:7
+    current_test_data=all_data(j,sizetesting:end);
+   for k=1:size(patient.testingData.area,2)
+    [~,idx]=ismember([current_test_data(k)],patient.training_matrix{j}(:,1),'rows');  %ML
+    if idx~=0
+        alarms_ml(j,k)=patient.training_matrix{j}(idx,4);
+        alarms_map(j,k)=patient.training_matrix{j}(idx,5);
+
+    end
+       alarms(1,k)=1;
+   end;
+end;
+patient.alarms_ml=alarms_ml;
+patient.alarms_map=alarms_map;
 patients=[patients,patient];
 
 end
@@ -154,11 +172,9 @@ for i = 1:NUM_PATIENTS
             case 6
                 title('Diastolic Blood Pressure');
             case 7
-                title('Pulse Pressure');       
-        end
-        
-        legend('H1 pmf','H0 pmf');
-    
+                title('Pulse Pressure');                  
+        end      
+        legend('H1 pmf','H0 pmf'); 
     end
     
     % H0 is the probability that there is no patient abnomality
