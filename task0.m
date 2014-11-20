@@ -118,9 +118,7 @@ for j=1:7
     if idx~=0
         alarms_ml(j,k)=patient.training_matrix{j}(idx,4);
         alarms_map(j,k)=patient.training_matrix{j}(idx,5);
-
     end
-       alarms(1,k)=1;
    end;
 end;
 patient.alarms_ml=alarms_ml;
