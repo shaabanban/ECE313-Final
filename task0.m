@@ -91,9 +91,9 @@ end;
     patient.testingGolden=trgolden;
    patient.testingNonGolden=trnongolden;
    
-     patient.H0 = sum(patient.trainingLabels) / size(patient.trainingLabels, 2);
+     patient.H1 = sum(patient.trainingLabels) / size(patient.trainingLabels, 2);
     % H1 is the probability that there is a patient abnomality.
-     patient.H1 = 1.0 -  patient.H0;
+     patient.H0 = 1.0 -  patient.H1;
   
 
    training_matrix=[];
@@ -110,7 +110,10 @@ end;
  %calculate alarms
  alarms_ml=zeros(7,size(patient.testingData.area,2));
   alarms_map=zeros(7,size(patient.testingData.area,2));
-
+  false_alarms_map=zeros(7,size(patient.testingData.area,2));
+  missed_alarms_map=zeros(7,size(patient.testingData.area,2));
+ false_alarms_ml=zeros(7,size(patient.testingData.area,2));
+  missed_alarms_ml=zeros(7,size(patient.testingData.area,2));
 for j=1:7
     current_test_data=all_data(j,sizetesting:end);
    for k=1:size(patient.testingData.area,2)
@@ -119,10 +122,31 @@ for j=1:7
         alarms_ml(j,k)=patient.training_matrix{j}(idx,4);
         alarms_map(j,k)=patient.training_matrix{j}(idx,5);
     end
+    if patient.testingLabels(k) == 1
+        if alarms_ml(j,k) == 0   %missed alaram ml
+            missed_alarms_ml(j,k)=1;
+        end
+        if alarms_map(j,k) == 0  %missed alaram map
+              missed_alarms_map(j,k)=1;
+        end
+    else
+        if alarms_ml(j,k) == 1              %false alaram ml
+            false_alarms_ml(j,k)=1;
+        end
+        if alarms_map(j,k) == 1              %false alaram map
+            false_alarms_map(j,k)=1;
+        end
+    end;
    end;
 end;
 patient.alarms_ml=alarms_ml;
 patient.alarms_map=alarms_map;
+patient.false_alarms_map=false_alarms_map;
+patient.false_alarms_ml=false_alarms_ml;
+patient.missed_alarms_map=missed_alarms_map;
+patient.missed_alarms_ml=missed_alarms_ml;
+
+
 patients=[patients,patient];
 
 end
