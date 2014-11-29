@@ -1,5 +1,5 @@
 %% Common setup code and variables.
-% vim:noexpandtab tabstop=4
+% vim:expandtab tabstop=4
 close all;
 clear all;
 PLOT_PRE_TASK3_FIGURES =  0;
@@ -263,4 +263,10 @@ all_map_err=sortrows(all_map_err,3);
 clearvars max_val min_val diff lower_bound_zeros upper_bound_zeros;
 
 
+%% Task 3.1
+% We will work with some stuff related to features 1 and 5.
+Joint_HT_table = doTask3dot1abc(HT_table_array);
+
+
+%% Final Cleanup
 %fclose(fid);
