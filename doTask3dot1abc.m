@@ -6,7 +6,6 @@ function [Joint_HT_table] = doTask3dot1abc(HT_table_array,H1,H0)
 meanarea=HT_table_array{1};
 systolic=HT_table_array{5};
 Joint_HT_table = cell(0, 6);
-
 for i=1:size(meanarea,1)
     for j=1:size(systolic,1)
         ph1=meanarea(i,2)*systolic(j,2);
