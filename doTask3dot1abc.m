@@ -29,4 +29,19 @@ end
 % 4: P(X=i,Y=j | H0); Prob. that X=i & Y=j where a golden alarm was not at.
 % 5: ML Predicted Label.
 % 6: MAP Predicted Label.
+
+
+%H1
+
+[jj,j2,j2] = unique(cell2mat(Joint_HT_table(:,2)));
+[ii,i2,i2] = unique(cell2mat(Joint_HT_table(:,1)));
+out = [[NaN,ii'];
+[jj,accumarray([j2,i2],cell2mat(Joint_HT_table(:,3)),[],[],NaN)]];
+mesh(out(1,2:end),out(2:end,1),out(2:end,2:end));
+
+%H0
+out = [[NaN,ii'];
+[jj,accumarray([j2,i2],cell2mat(Joint_HT_table(:,4)),[],[],NaN)]];
+mesh(out(1,2:end),out(2:end,1),out(2:end,2:end));
+
 end

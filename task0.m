@@ -270,10 +270,5 @@ Joint_HT_table_p3 = doTask3dot1abc( HT_table_array(3,:),patients(3).H1,patients(
 Joint_HT_table_p5 = doTask3dot1abc( HT_table_array(5,:),patients(5).H1,patients(5).H0);
 Joint_HT_table={Joint_HT_table_p1,Joint_HT_table_p3,Joint_HT_table_p5};
 
-[jj,j2,j2] = unique(cell2mat(Joint_HT_table_p1(:,2)));
-[ii,i2,i2] = unique(cell2mat(Joint_HT_table_p1(:,1)));
-out = [[NaN,ii'];
-[jj,accumarray([j2,i2],cell2mat(Joint_HT_table_p1(:,3)),[],[],NaN)]];
-mesh(out(1,2:end),out(2:end,1),out(2:end,2:end));
 %% Final Cleanup
 %fclose(fid);
