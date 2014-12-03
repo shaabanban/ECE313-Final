@@ -32,16 +32,26 @@ end
 
 
 %H1
-
+figure
+%H1
+subplot(2,1,1)
 [jj,j2,j2] = unique(cell2mat(Joint_HT_table(:,2)));
 [ii,i2,i2] = unique(cell2mat(Joint_HT_table(:,1)));
 out = [[NaN,ii'];
 [jj,accumarray([j2,i2],cell2mat(Joint_HT_table(:,3)),[],[],NaN)]];
 mesh(out(1,2:end),out(2:end,1),out(2:end,2:end));
+xlabel('Systolic Blood Pressure')
+ylabel('Mean Area under the heart beat')
+zlabel('P(X,Y|H0)')
 
 %H0
+subplot(2,1,2)
 out = [[NaN,ii'];
 [jj,accumarray([j2,i2],cell2mat(Joint_HT_table(:,4)),[],[],NaN)]];
 mesh(out(1,2:end),out(2:end,1),out(2:end,2:end));
+xlabel('Systolic Blood Pressure')
+ylabel('Mean Area under the heart beat')
+zlabel('P(X,Y|H0)')
+
 
 end
