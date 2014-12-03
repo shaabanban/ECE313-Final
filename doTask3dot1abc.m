@@ -2,7 +2,7 @@
 
 % Does all things related to Task 3.1 parts (a) through (c).
 % It creates the decision rules for ML and MAP using the training data.
-function [Joint_HT_table] = doTask3dot1abc(HT_table_array,H1,H0)
+function [Joint_HT_table, patient] = doTask3dot1abc(HT_table_array,patient)
 % We will be working with features 1 and 5.
 % The columns of Joint_HT_table are as follows:
 % 1: X = i; Feature 1's values put in rows.
@@ -23,7 +23,7 @@ for i=1:size(meanarea,1)
         if ph1>=ph0
             map=1;
         end;
-           if ph1/(H1*H1)>=ph0/(H0 * H0)
+           if ph1/(patient.H1*patient.H1)>=ph0/(patient.H0 * patient.H0)
             ml=1;
         end;
 Joint_HT_table(size(Joint_HT_table,1)+1,:)=[{meanarea(i,1)},{systolic(j,1)},{ph1},{ph0},{ml},{map}];
@@ -53,5 +53,6 @@ xlabel('Systolic Blood Pressure')
 ylabel('Mean Area under the heart beat')
 zlabel('P(X,Y|H0)')
 
+analysis=[];
 
 end
