@@ -266,9 +266,10 @@ clearvars corr1 i j k;
 
 %% Task 3.1
 % We will work with some stuff related to features 1 and 5.
-Joint_HT_table_p1 = doTask3dot1abc( HT_table_array(1,:),patients(1).H1,patients(1).H0);
-Joint_HT_table_p3 = doTask3dot1abc( HT_table_array(3,:),patients(3).H1,patients(3).H0);
-Joint_HT_table_p5 = doTask3dot1abc( HT_table_array(5,:),patients(5).H1,patients(5).H0);
+Joint_HT_table_p1 = doTask3dot1abc( HT_table_array(1,:),patients(1));
+Joint_HT_table_p3 = doTask3dot1abc( HT_table_array(3,:),patients(3));
+Joint_HT_table_p5 = doTask3dot1abc( HT_table_array(5,:),patients(5));
+
 Joint_HT_table={Joint_HT_table_p1,Joint_HT_table_p3,Joint_HT_table_p5};
 
 
