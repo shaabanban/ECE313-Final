@@ -155,9 +155,11 @@ end
 
 %% Task 0 Cleanup
 % Delete temporary variables from our loop.
-clearvars data_mean_area data_mean_r2r data_bpm data_p2p data_systolic ...
-    data_diastolic data_pulse size_data size_training;
-
+clearvars patient trgolden trnongolden gcntr ngcntr sizetraining ...
+    sizetesting sizetotal idx data_mean_area_per_file ...
+    data_mean_r2r_per_file data_bpm_per_file data_p2p_per_file ...
+    data_systolic_per_file data_diastolic_per_file ...
+    data_pulse_per_file labels_per_file current_test_data i j k;
 
 %% Task 1
 % 1.1
@@ -165,8 +167,6 @@ clearvars data_mean_area data_mean_r2r data_bpm data_p2p data_systolic ...
 p_H0 = (NUM_PATIENTS);
 p_H1 = (NUM_PATIENTS);
 
-H1 = {};
-H0 = {};
 HT_table_array = cell(9, 7);
 Error_table_array = cell(9, 7);
 all_map_err=cell(0,3);
@@ -255,12 +255,13 @@ for j=1:7
     end;
 end;
 
-
 all_ml_err=sortrows(all_ml_err,3);
 %fprintf('MAP\n');
 all_map_err=sortrows(all_map_err,3);
+
+
 %% Task 1.1 Cleanup
-clearvars max_val min_val diff lower_bound_zeros upper_bound_zeros;
+clearvars corr1 i j k;
 
 
 %% Task 3.1
@@ -270,5 +271,12 @@ Joint_HT_table_p3 = doTask3dot1abc( HT_table_array(3,:),patients(3).H1,patients(
 Joint_HT_table_p5 = doTask3dot1abc( HT_table_array(5,:),patients(5).H1,patients(5).H0);
 Joint_HT_table={Joint_HT_table_p1,Joint_HT_table_p3,Joint_HT_table_p5};
 
+
+%% Task 3.1 Cleanup
+clearvars Joint_HT_table_p1 Joint_HT_table_p3 Joint_HT_table_p5
+
+
 %% Final Cleanup
+% Remove variables used in the code that do not help us interpret output.
+clearvars PLOT_PRE_TASK3_FIGURES filenames NUM_DATA_CELLS NUM_PATIENTS
 %fclose(fid);
