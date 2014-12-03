@@ -265,7 +265,7 @@ clearvars max_val min_val diff lower_bound_zeros upper_bound_zeros;
 
 %% Task 3.1
 % We will work with some stuff related to features 1 and 5.
-Joint_HT_table = doTask3dot1abc(HT_table_array);
+Joint_HT_table = doTask3dot1abc( HT_table_array(1,:),patients(1).H1,patients(1).H0);
 
 
 %% Final Cleanup
