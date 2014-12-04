@@ -161,13 +161,12 @@ clearvars patient trgolden trnongolden gcntr ngcntr sizetraining ...
     sizetesting sizetotal idx data_mean_area_per_file ...
     data_mean_r2r_per_file data_bpm_per_file data_p2p_per_file ...
     data_systolic_per_file data_diastolic_per_file ...
-    data_pulse_per_file labels_per_file current_test_data i j k;
+    data_pulse_per_file labels_per_file current_test_data alarms_ml ...
+    alarms_map false_alarms_ml false_alarms_map missed_alarms_ml ...
+    missed_alarms_map training_matrix testing_matrix i j k;
 
 %% Task 1
 % 1.1
-
-p_H0 = (NUM_PATIENTS);
-p_H1 = (NUM_PATIENTS);
 
 HT_table_array = cell(9, 7);
 Error_table_array = cell(9, 7);
@@ -263,7 +262,7 @@ all_map_err=sortrows(all_map_err,3);
 
 
 %% Task 1.1 Cleanup
-clearvars corr1 i j k;
+clearvars corr1 etable i j k;
 
 
 %% Task 3.1
@@ -279,10 +278,12 @@ Joint_HT_table={Joint_HT_table_p1,Joint_HT_table_p3,Joint_HT_table_p5};
 
 
 %% Task 3.1 Cleanup
-clearvars Joint_HT_table_p1 Joint_HT_table_p3 Joint_HT_table_p5
+clearvars Joint_HT_table_p1 Joint_HT_table_p3 Joint_HT_table_p5 ...
+    patient
 
 
 %% Final Cleanup
 % Remove variables used in the code that do not help us interpret output.
-clearvars PLOT_PRE_TASK3_FIGURES filenames NUM_DATA_CELLS NUM_PATIENTS
+clearvars PLOT_PRE_TASK3_FIGURES filenames NUM_DATA_CELLS NUM_PATIENTS ...
+    DATA_CELL_RAW DATA_CELL_TESTING DATA_CELL_TRAINING
 %fclose(fid);
