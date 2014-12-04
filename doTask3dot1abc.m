@@ -52,7 +52,21 @@ mesh(out(1,2:end),out(2:end,1),out(2:end,2:end));
 xlabel('Systolic Blood Pressure')
 ylabel('Mean Area under the heart beat')
 zlabel('P(X,Y|H0)')
+testing_area=patient.testingData.area;
+testing_systolic=patient.testingData.systolic;
+alarms_ml=zeros(length(testing_area));
+alarms_map=zeros(length(testing_area));
+missed_ml=0;
+missed_map=0;
 
-analysis=[];
+for i=1:length(testing_area)
+     [~,idx]=ismember([testing_area(i),testing_systolic(i)],cell2mat(Joint_HT_table(:,1:2)),'rows');
+        if idx ~=0
+            talarms_ml(i)=Joint_HT_table(idx,5);
+            talarms_map(i)=Joint_HT_table(idx,6);
+        end;
+end;
+patient.genAlarmsMl=cell2mat(talarms_ml);
+patient.genAlarmsMAP=cell2mat(talarms_map);
 
 end

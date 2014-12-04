@@ -59,6 +59,8 @@ for i = 1:NUM_PATIENTS
         'bpm',all_data(3,sizetesting:end),'p2p_bp',all_data(4,sizetesting:end), ...
         'systolic',all_data(5,sizetesting:end),'diastolic',all_data(6,sizetesting:end)...
         ,'pulse_pr',all_data(7,sizetesting:end),'golden',all_labels(1,sizetesting:end)),'testingLabels',all_labels(1,sizetesting:end));
+    patient.genAlarmsMl=[];
+patient.genAlarmsMAP=[];
     trgolden = [];
     trnongolden = [];
     gcntr=1;
@@ -266,9 +268,12 @@ clearvars corr1 i j k;
 
 %% Task 3.1
 % We will work with some stuff related to features 1 and 5.
-[Joint_HT_table_p1,patients(1)] = doTask3dot1abc( HT_table_array(1,:),patients(1));
-[Joint_HT_table_p3,patients(3)] = doTask3dot1abc( HT_table_array(3,:),patients(3));
-[Joint_HT_table_p5,patients(5)] = doTask3dot1abc( HT_table_array(5,:),patients(5));
+[Joint_HT_table_p1,patient] = doTask3dot1abc( HT_table_array(1,:),patients(1));
+patients(1)=patient;
+[Joint_HT_table_p3,patient] = doTask3dot1abc( HT_table_array(3,:),patients(3));
+patients(3)=patient;
+[Joint_HT_table_p5,patient] = doTask3dot1abc( HT_table_array(5,:),patients(5));
+patients(5)=patient;
 
 Joint_HT_table={Joint_HT_table_p1,Joint_HT_table_p3,Joint_HT_table_p5};
 
