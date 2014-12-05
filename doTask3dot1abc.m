@@ -2,7 +2,7 @@
 
 % Does all things related to Task 3.1 parts (a) through (c).
 % It creates the decision rules for ML and MAP using the training data.
-function [Joint_HT_table, patient,res] = doTask3dot1abc(HT_table_array,patient,par1,par2,bluewaters)
+function [Joint_HT_table, patient,res] = doTask3dot1abc(HT_table_array,d_rule_patient,patient,par1,par2,bluewaters)
 % We will be working with features 1 and 5.
 % The columns of Joint_HT_table are as follows:
 % 1: X = i; Feature 1's values put in rows.
@@ -24,11 +24,11 @@ for i=1:size(meanarea,1)
         ml=0;
         map=0;
         if ph1>=ph0
-            map=1;
-        end;
-           if ph1/(patient.H1*patient.H1)>=ph0/(patient.H0 * patient.H0)
             ml=1;
         end;
+           if ph1*d_rule_patient.H1>=ph0*d_rule_patient.H0
+            map=1;
+            end;
 Joint_HT_table(size(Joint_HT_table,1)+1,:)=[{meanarea(i,1)},{systolic(j,1)},{ph1},{ph0},{ml},{map}];
 end
 end
@@ -45,7 +45,7 @@ subplot(2,1,1)
 out = [[NaN,ii'];
 [jj,accumarray([j2,i2],cell2mat(Joint_HT_table(:,3)),[],[],NaN)]];
 mesh(out(1,2:end),out(2:end,1),out(2:end,2:end));
-ylabel('Pulse Pressure')
+ylabel('Beats Per Minute')
 xlabel('Mean Area under the heart beat')
 zlabel('P(X,Y|H1)')
 
@@ -56,7 +56,7 @@ subplot(2,1,2)
 out = [[NaN,ii'];
 [jj,accumarray([j2,i2],cell2mat(Joint_HT_table(:,4)),[],[],NaN)]];
 mesh(out(1,2:end),out(2:end,1),out(2:end,2:end));
-ylabel('Pulse Pressure ')
+ylabel('Beats Per Minute')
 xlabel('Mean Area under the heart beat')
 zlabel('P(X,Y|H0)')
 end;
@@ -73,8 +73,12 @@ for i=1:length(testing_area)
      [~,idx]=ismember([testing_area(i),testing_systolic(i)],cell2mat(Joint_HT_table(:,1:2)),'rows');
         if idx ~=0
             talarms_ml(i)=Joint_HT_table(idx,5);
-            talarms_map(i)=Joint_HT_table(idx,6);
-            if patient.testingLabels(i)==1          %golden alarm
+            talarms_map(i)=Joint_HT_table(idx,6);          
+        else
+              talarms_ml(i)={0};
+              talarms_map(i)={0};
+        end;
+        if patient.testingLabels(i)==1          %golden alarm
                 if talarms_ml{i} == 0           %miss ml
                      missed_map=missed_map+1;
                 end;
@@ -88,25 +92,22 @@ for i=1:length(testing_area)
                  if talarms_map{i} == 1          %false map
                      false_map=false_map+1;
                  end;
-            end;
         end;
 end;
 patient.genAlarmsMl=cell2mat(talarms_ml);
 patient.genAlarmsMAP=cell2mat(talarms_map);
-
-patient.testingLabels
-
+if bluewaters==0
 figure
 subplot(3,1,1)
-bar(patient.genAlarmsMl)
+bar(patient.genAlarmsMl);
 
 subplot(3,1,2)
-bar(patient.genAlarmsMAP)
+bar(patient.genAlarmsMAP);
 
 subplot(3,1,3)
-bar(patient.testingLabels)
+bar(patient.testingLabels);
 
-
+end;
 res=zeros(2,3);
 res(1,1)=false_ml/(length(patient.testingLabels)-sum(patient.testingLabels));
 res(1,2)=missed_ml/(sum(patient.testingLabels));

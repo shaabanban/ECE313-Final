@@ -271,14 +271,15 @@ clearvars corr1 etable i j k;
 
 %% Task 3.1
 % We will work with some stuff related to features 1 and 5.
-[Joint_HT_table_p6,patient,analysis1] = doTask3dot1abc( HT_table_array(6,:),patients(6),1,7,bluewaters);
-patients(6)=patient;
-[Joint_HT_table_p7,patient,analysis3] = doTask3dot1abc( HT_table_array(7,:),patients(7),1,7,bluewaters);
+[Joint_HT_table_p1,patient,analysis1] = doTask3dot1abc( HT_table_array(1,:),patients(1),patients(1),1,3,bluewaters);
+patients(1)=patient;
+[Joint_HT_table_p2,patient,analysis2] = doTask3dot1abc( HT_table_array(2,:),patients(2),patients(2),1,3,bluewaters);
+patients(2)=patient;
+[Joint_HT_table_p7,patient,analysis7] = doTask3dot1abc( HT_table_array(7,:),patients(7),patients(7),1,3,bluewaters);
 patients(7)=patient;
-[Joint_HT_table_p5,patient,analysis5] = doTask3dot1abc( HT_table_array(5,:),patients(5),1,7,bluewaters);
-patients(5)=patient;
 
-Joint_HT_table={Joint_HT_table_p5,Joint_HT_table_p6,Joint_HT_table_p7};
+
+Joint_HT_table={Joint_HT_table_p1,Joint_HT_table_p2,Joint_HT_table_p7};
 
 if bluewaters == 1
 errtabml=zeros(0,7);
@@ -289,8 +290,8 @@ for k=1:7
         for i=1:8
             for j=1:8
                 fprintf('Decision Rule: %d Patient: %d Features: %d,%d \n',i,j,k,l);
-                fprintf('%d of 1280\n\n',ct);
-            [Joint_HT_table_p1,patient,analysis] = doTask3dot1abc( HT_table_array(i,:),patients(j),k,l,bluewaters);
+                fprintf('%d of 1340\n\n',ct);
+            [Joint_HT_table_p1,patient,analysis] = doTask3dot1abc( HT_table_array(i,:),patients(i),patients(j),k,l,bluewaters);
 errtabml(size(errtabml,1)+1,:)=[k,l,i,j,analysis(1,1),analysis(1,2),analysis(1,3)];
 errtabmap(size(errtabmap,1)+1,:)=[k,l,i,j,analysis(2,1),analysis(2,2),analysis(2,3)];
 
