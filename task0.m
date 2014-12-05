@@ -6,8 +6,12 @@ PLOT_PRE_TASK3_FIGURES =  0;
 patients=[];
 % Open the result file
 %fid = fopen('ECE313_Final_Project_group_zeta.txt', 'w');
-
-% Definitions of all_data rows. From slide 5.
+bluewaters = 0; % if you set this flag to one, the program will calculate...
+% errors for every possible combination of features for every decision rule
+% for every patient. Unless this is being run on blue waters, this
+% calculation will likely take several hours to run, so use with caution.
+% Definitions of all_data rows. From slide 5. This also disables any
+% plotting within the doTask3dot1abc.m file
 DATA_MEAN_HEART_BEAT_AREA =     1;
 DATA_MEAN_R2R_PEAK_INTERVAL =   2;
 DATA_BPM_HEART_RATE =           3;
@@ -267,16 +271,37 @@ clearvars corr1 etable i j k;
 
 %% Task 3.1
 % We will work with some stuff related to features 1 and 5.
-[Joint_HT_table_p1,patient,analysis1] = doTask3dot1abc( HT_table_array(1,:),patients(1));
-patients(1)=patient;
-[Joint_HT_table_p3,patient,analysis3] = doTask3dot1abc( HT_table_array(3,:),patients(3));
-patients(3)=patient;
-[Joint_HT_table_p5,patient,analysis5] = doTask3dot1abc( HT_table_array(5,:),patients(5));
+[Joint_HT_table_p6,patient,analysis1] = doTask3dot1abc( HT_table_array(6,:),patients(6),1,7,bluewaters);
+patients(6)=patient;
+[Joint_HT_table_p7,patient,analysis3] = doTask3dot1abc( HT_table_array(7,:),patients(7),1,7,bluewaters);
+patients(7)=patient;
+[Joint_HT_table_p5,patient,analysis5] = doTask3dot1abc( HT_table_array(5,:),patients(5),1,7,bluewaters);
 patients(5)=patient;
 
-Joint_HT_table={Joint_HT_table_p1,Joint_HT_table_p3,Joint_HT_table_p5};
+Joint_HT_table={Joint_HT_table_p5,Joint_HT_table_p6,Joint_HT_table_p7};
 
+if bluewaters == 1
+errtabml=zeros(0,7);
+errtabmap=zeros(0,7);
+ct=1;
+for k=1:7
+    for l=(k+1):7
+        for i=1:8
+            for j=1:8
+                fprintf('Decision Rule: %d Patient: %d Features: %d,%d \n',i,j,k,l);
+                fprintf('%d of 1280\n\n',ct);
+            [Joint_HT_table_p1,patient,analysis] = doTask3dot1abc( HT_table_array(i,:),patients(j),k,l,bluewaters);
+errtabml(size(errtabml,1)+1,:)=[k,l,i,j,analysis(1,1),analysis(1,2),analysis(1,3)];
+errtabmap(size(errtabmap,1)+1,:)=[k,l,i,j,analysis(2,1),analysis(2,2),analysis(2,3)];
 
+                ct=ct+1;
+    
+            end;
+        end;
+        
+    end;
+end;
+end;
 %% Task 3.1 Cleanup
 clearvars Joint_HT_table_p1 Joint_HT_table_p3 Joint_HT_table_p5 ...
     patient

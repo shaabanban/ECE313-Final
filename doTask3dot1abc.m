@@ -2,7 +2,7 @@
 
 % Does all things related to Task 3.1 parts (a) through (c).
 % It creates the decision rules for ML and MAP using the training data.
-function [Joint_HT_table, patient,res] = doTask3dot1abc(HT_table_array,patient)
+function [Joint_HT_table, patient,res] = doTask3dot1abc(HT_table_array,patient,par1,par2,bluewaters)
 % We will be working with features 1 and 5.
 % The columns of Joint_HT_table are as follows:
 % 1: X = i; Feature 1's values put in rows.
@@ -11,8 +11,11 @@ function [Joint_HT_table, patient,res] = doTask3dot1abc(HT_table_array,patient)
 % 4: P(X=i,Y=j | H0); Prob. that X=i & Y=j where a golden alarm was not at.
 % 5: ML Predicted Label.
 % 6: MAP Predicted Label.
-meanarea=HT_table_array{1};
-systolic=HT_table_array{5};
+meanarea=HT_table_array{par1};
+pararr=[{patient.testingData.area},{patient.testingData.rr},{patient.testingData.bpm},...
+    patient.testingData.p2p_bp,patient.testingData.systolic,patient.testingData.diastolic,...
+    patient.testingData.pulse_pr];
+systolic=HT_table_array{par2};
 Joint_HT_table = cell(0, 6);
 for i=1:size(meanarea,1)
     for j=1:size(systolic,1)
@@ -32,8 +35,10 @@ end
 
 
 %H1
-figure
+
 %H1
+if bluewaters==0
+figure
 subplot(2,1,1)
 [jj,j2,j2] = unique(cell2mat(Joint_HT_table(:,2)));
 [ii,i2,i2] = unique(cell2mat(Joint_HT_table(:,1)));
@@ -52,8 +57,9 @@ mesh(out(1,2:end),out(2:end,1),out(2:end,2:end));
 ylabel('Systolic Blood Pressure')
 xlabel('Mean Area under the heart beat')
 zlabel('P(X,Y|H0)')
-testing_area=patient.testingData.area;
-testing_systolic=patient.testingData.systolic;
+end;
+testing_area=cell2mat(pararr(par1));
+testing_systolic=cell2mat(pararr(par2));
 alarms_ml=zeros(length(testing_area));
 alarms_map=zeros(length(testing_area));
 missed_ml=0;
