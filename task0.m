@@ -153,7 +153,6 @@ patient.genAlarmsMAP=[];
     patient.missed_alarms_map=missed_alarms_map;
     patient.missed_alarms_ml=missed_alarms_ml;
     
-    
     patients=[patients,patient];
     
 end
