@@ -99,6 +99,7 @@ patient.testingLabels
 figure
 subplot(3,1,1)
 bar(patient.genAlarmsMl)
+title(['Patient',' ',int2str(patient.pnum)])
 
 subplot(3,1,2)
 bar(patient.genAlarmsMAP)
