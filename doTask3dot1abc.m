@@ -45,16 +45,18 @@ subplot(2,1,1)
 out = [[NaN,ii'];
 [jj,accumarray([j2,i2],cell2mat(Joint_HT_table(:,3)),[],[],NaN)]];
 mesh(out(1,2:end),out(2:end,1),out(2:end,2:end));
-ylabel('Systolic Blood Pressure')
+ylabel('Pulse Pressure')
 xlabel('Mean Area under the heart beat')
 zlabel('P(X,Y|H1)')
+
+title(['Patient',' ',int2str(patient.pnum)])
 
 %H0
 subplot(2,1,2)
 out = [[NaN,ii'];
 [jj,accumarray([j2,i2],cell2mat(Joint_HT_table(:,4)),[],[],NaN)]];
 mesh(out(1,2:end),out(2:end,1),out(2:end,2:end));
-ylabel('Systolic Blood Pressure')
+ylabel('Pulse Pressure ')
 xlabel('Mean Area under the heart beat')
 zlabel('P(X,Y|H0)')
 end;
@@ -91,6 +93,20 @@ for i=1:length(testing_area)
 end;
 patient.genAlarmsMl=cell2mat(talarms_ml);
 patient.genAlarmsMAP=cell2mat(talarms_map);
+
+patient.testingLabels
+
+figure
+subplot(3,1,1)
+bar(patient.genAlarmsMl)
+
+subplot(3,1,2)
+bar(patient.genAlarmsMAP)
+
+subplot(3,1,3)
+bar(patient.testingLabels)
+
+
 res=zeros(2,3);
 res(1,1)=false_ml/(length(patient.testingLabels)-sum(patient.testingLabels));
 res(1,2)=missed_ml/(sum(patient.testingLabels));
