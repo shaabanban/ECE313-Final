@@ -173,13 +173,13 @@ clearvars patient trgolden trnongolden gcntr ngcntr sizetraining ...
 
 HT_table_array = cell(9, 7);
 Error_table_array = cell(9, 7);
-all_map_err=cell(0,3);
-all_ml_err=cell(0,3);
+all_map_err=cell(0,5);
+all_ml_err=cell(0,5);
 all_comb_corr=cell(0,4);
 all_comb_corr2=cell(0,3);
 
 all_p_dat=zeros(7,0);
-for i = 1:NUM_PATIENTS
+for i = 1:8
     % Calculate H0 and H1.
     
     if PLOT_PRE_TASK3_FIGURES == 1
@@ -197,8 +197,8 @@ for i = 1:NUM_PATIENTS
         etable(2,3)=(sum(patients(i).false_alarms_map(j,:))+sum(patients(i).missed_alarms_map(j,:)))/(size(patients(i).testingLabels,2));
         
         Error_table_array(i, j)={etable};
-        all_map_err(size(all_map_err,1)+1,:)={i,j,etable(2,3)};
-        all_ml_err(size(all_ml_err,1)+1,:)={i,j,etable(1,3)};
+        all_map_err(size(all_map_err,1)+1,:)={i,j,etable(2,1),etable(2,2),etable(2,3)};
+        all_ml_err(size(all_ml_err,1)+1,:)={i,j,etable(1,1),etable(1,2),etable(1,3)};
         
         if PLOT_PRE_TASK3_FIGURES == 1
             %h0
@@ -274,7 +274,7 @@ clearvars corr1 etable i j k;
 patients(1)=patient;
 [Joint_HT_table_p2,patient,analysis2] = doTask3dot1abc( HT_table_array(2,:),patients(2),patients(2),1,3,bluewaters);
 patients(2)=patient;
-[Joint_HT_table_p7,patient,analysis7] = doTask3dot1abc( HT_table_array(6,:),patients(6),patients(7),1,3,bluewaters);
+[Joint_HT_table_p7,patient,analysis7] = doTask3dot1abc( HT_table_array(6,:),patients(6),patients(6),1,3,bluewaters);
 patients(7)=patient;
 
 

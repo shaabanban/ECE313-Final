@@ -110,7 +110,7 @@ title(['Patient',' ',int2str(patient.pnum), ' ' ,'MAP'])
 
 subplot(3,1,3)
 bar(patient.testingLabels)
-title(['Patient',' ',int2str(patient.pnum), ' ' ,'Testing Label'])
+title(['Patient',' ',int2str(patient.pnum), ' ' ,'Testing Golden Alarms'])
 
 end;
 res=zeros(2,3);
