@@ -270,9 +270,9 @@ clearvars corr1 etable i j k;
 
 %% Task 3.1
 % We will work with some stuff related to features 1 and 5.
-[Joint_HT_table_p1,patient,analysis1] = doTask3dot1abc( HT_table_array(6,:),patients(6),patients(1),1,3,bluewaters);
+[Joint_HT_table_p1,patient,analysis1] = doTask3dot1abc( HT_table_array(1,:),patients(1),patients(1),1,3,bluewaters);
 patients(1)=patient;
-[Joint_HT_table_p2,patient,analysis2] = doTask3dot1abc( HT_table_array(6,:),patients(6),patients(2),1,3,bluewaters);
+[Joint_HT_table_p2,patient,analysis2] = doTask3dot1abc( HT_table_array(2,:),patients(2),patients(2),1,3,bluewaters);
 patients(2)=patient;
 [Joint_HT_table_p7,patient,analysis7] = doTask3dot1abc( HT_table_array(6,:),patients(6),patients(7),1,3,bluewaters);
 patients(7)=patient;
